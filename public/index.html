@@ -8,311 +8,160 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --navy: #0b1929;
-  --navy-mid: #0f2235;
-  --navy-light: #1a3350;
-  --blue: #2e7dda;
-  --blue-bright: #3b9eff;
-  --blue-dim: #1a4a7a;
-  --teal: #1db88a;
-  --teal-dim: #0d6e52;
-  --amber: #f5a623;
-  --red: #e85d4a;
-  --surface: #f4f6f9;
-  --surface-2: #edf0f5;
-  --border: rgba(0,0,0,0.1);
-  --border-light: rgba(0,0,0,0.06);
-  --text: #0d1f35;
-  --text-2: #4a6278;
-  --text-3: #8fa5bb;
-  --font: 'Sora', sans-serif;
-  --mono: 'DM Mono', monospace;
-  --radius: 10px;
-  --radius-sm: 6px;
+  --navy: #0b1929; --navy-mid: #0f2235; --blue: #2e7dda; --blue-bright: #3b9eff;
+  --teal: #1db88a; --teal-dim: #0d6e52; --amber: #f5a623; --red: #e85d4a;
+  --surface: #f4f6f9; --surface-2: #edf0f5;
+  --border: rgba(0,0,0,0.1); --border-light: rgba(0,0,0,0.06);
+  --text: #0d1f35; --text-2: #4a6278; --text-3: #8fa5bb;
+  --font: 'Sora', sans-serif; --mono: 'DM Mono', monospace;
+  --radius: 10px; --radius-sm: 6px;
   --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
-body {
-  font-family: var(--font);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 13px;
-  line-height: 1.5;
-}
+body { font-family: var(--font); background: var(--surface); color: var(--text); font-size: 13px; line-height: 1.5; }
+.layout { display: grid; grid-template-columns: 220px 1fr; grid-template-rows: 52px 1fr; height: 100vh; }
 
-/* ── Layout ─────────────────────────────────────────────────────────── */
-.layout { display: grid; grid-template-columns: 240px 1fr; grid-template-rows: 52px 1fr; height: 100vh; }
-
-/* ── Topbar ─────────────────────────────────────────────────────────── */
+/* Topbar */
 .topbar {
-  grid-column: 1 / -1;
-  background: var(--navy);
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  gap: 16px;
+  grid-column: 1/-1; background: var(--navy);
+  display: flex; align-items: center; padding: 0 20px; gap: 16px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .logo { font-size: 16px; font-weight: 600; color: #fff; letter-spacing: -0.3px; }
 .logo span { color: var(--blue-bright); }
 .topbar-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.12); }
 .topbar-title { font-size: 12px; color: rgba(255,255,255,0.55); font-weight: 300; }
-.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
-.conn-badge {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 11px; color: rgba(255,255,255,0.45);
-  background: rgba(255,255,255,0.05);
-  padding: 4px 10px; border-radius: 20px;
-}
-.conn-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); }
+.topbar-right { margin-left: auto; }
+.conn-badge { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 20px; }
+.conn-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); transition: background 0.3s; }
 .conn-dot.live { background: var(--teal); box-shadow: 0 0 0 3px rgba(29,184,138,0.2); }
+.conn-dot.err  { background: var(--red); }
 
-/* ── Sidebar ─────────────────────────────────────────────────────────── */
-.sidebar {
-  background: #fff;
-  border-right: 1px solid var(--border-light);
-  padding: 16px 0;
-  overflow-y: auto;
-}
-.sidebar-section { margin-bottom: 4px; }
-.sidebar-label {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.8px;
-  color: var(--text-3); padding: 8px 18px 4px; text-transform: uppercase;
-}
-.nav-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 18px; cursor: pointer;
-  font-size: 12px; font-weight: 400; color: var(--text-2);
-  transition: background 0.12s, color 0.12s;
-  border-left: 3px solid transparent;
-}
+/* Sidebar */
+.sidebar { background: #fff; border-right: 1px solid var(--border-light); padding: 16px 0; overflow-y: auto; }
+.sidebar-label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: var(--text-3); padding: 8px 18px 4px; text-transform: uppercase; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 18px; cursor: pointer; font-size: 12px; color: var(--text-2); transition: background 0.12s, color 0.12s; border-left: 3px solid transparent; }
 .nav-item:hover { background: var(--surface); color: var(--text); }
-.nav-item.active {
-  background: #e8f2fd; color: var(--blue);
-  border-left-color: var(--blue); font-weight: 500;
-}
-.nav-icon { font-size: 15px; width: 18px; flex-shrink: 0; }
+.nav-item.active { background: #e8f2fd; color: var(--blue); border-left-color: var(--blue); font-weight: 500; }
 
-/* ── Main content ────────────────────────────────────────────────────── */
+/* Main */
 .main { overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
 
-/* ── Cards ───────────────────────────────────────────────────────────── */
-.card {
-  background: #fff; border-radius: var(--radius);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow); overflow: hidden;
-}
-.card-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 13px 18px;
-  border-bottom: 1px solid var(--border-light);
-  background: #fafbfc;
-}
-.card-title {
-  font-size: 12px; font-weight: 600; color: var(--text);
-  letter-spacing: 0.1px;
-}
+/* Cards */
+.card { background: #fff; border-radius: var(--radius); border: 1px solid var(--border-light); box-shadow: var(--shadow); overflow: hidden; }
+.card-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--border-light); background: #fafbfc; }
+.card-title { font-size: 12px; font-weight: 600; color: var(--text); }
 .card-body { padding: 16px 18px; }
 
-/* ── Form elements ───────────────────────────────────────────────────── */
+/* Fields */
 .field { display: flex; flex-direction: column; gap: 5px; }
-.field label {
-  font-size: 10px; font-weight: 600; color: var(--text-3);
-  text-transform: uppercase; letter-spacing: 0.5px;
-}
-.field input, .field select {
-  height: 34px; padding: 0 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: #fff;
-  color: var(--text);
-  font-size: 12px; font-family: var(--font);
-  width: 100%;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.field input:focus, .field select:focus {
-  outline: none;
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(46,125,218,0.12);
-}
-.field input.mono, .field input[readonly] { font-family: var(--mono); font-size: 11px; }
+.field label { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; }
+.field input, .field select { height: 34px; padding: 0 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--text); font-size: 12px; font-family: var(--font); width: 100%; transition: border-color 0.15s, box-shadow 0.15s; }
+.field input:focus, .field select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(46,125,218,0.12); }
+.field input.mono { font-family: var(--mono); font-size: 11px; }
 .field input[readonly] { background: var(--surface); color: var(--text-2); cursor: default; }
-.field select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%238fa5bb' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
-}
+.field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%238fa5bb' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
 .field select:disabled { background: var(--surface); color: var(--text-3); }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-.grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
 
-/* ── Buttons ─────────────────────────────────────────────────────────── */
-.btn {
-  height: 32px; padding: 0 14px; border-radius: var(--radius-sm);
-  font-size: 12px; font-family: var(--font); font-weight: 500;
-  cursor: pointer; border: 1px solid var(--border);
-  background: #fff; color: var(--text);
-  display: inline-flex; align-items: center; gap: 6px;
-  white-space: nowrap; transition: background 0.12s, border-color 0.12s, opacity 0.12s;
-  flex-shrink: 0;
-}
+/* Buttons */
+.btn { height: 32px; padding: 0 14px; border-radius: var(--radius-sm); font-size: 12px; font-family: var(--font); font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: #fff; color: var(--text); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; transition: background 0.12s; flex-shrink: 0; }
 .btn:hover:not(:disabled) { background: var(--surface); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
-.btn-primary:hover:not(:disabled) { background: #2570c8; border-color: #2570c8; }
+.btn-primary:hover:not(:disabled) { background: #2570c8; }
 .btn-success { background: var(--teal); color: #fff; border-color: var(--teal); }
-.btn-success:hover:not(:disabled) { background: var(--teal-dim); border-color: var(--teal-dim); }
-.btn-navy { background: var(--navy); color: #fff; border-color: var(--navy); }
-.btn-navy:hover:not(:disabled) { background: var(--navy-mid); }
+.btn-success:hover:not(:disabled) { background: var(--teal-dim); }
 .btn-lg { height: 40px; padding: 0 20px; font-size: 13px; border-radius: var(--radius); }
-
-/* ── Inline row ──────────────────────────────────────────────────────── */
 .inline { display: flex; gap: 10px; align-items: flex-end; }
 .inline .field { flex: 1; }
 
-/* ── Badges / pills ──────────────────────────────────────────────────── */
-.pill {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 10px; font-weight: 600; padding: 2px 7px;
-  border-radius: 20px; letter-spacing: 0.2px;
-}
-.pill-blue { background: #ddeeff; color: #1a5a9a; }
-.pill-green { background: #d6f5e8; color: #0d6e52; }
+/* Pills */
+.pill { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+.pill-blue   { background: #ddeeff; color: #1a5a9a; }
+.pill-green  { background: #d6f5e8; color: #0d6e52; }
 .pill-orange { background: #fff3db; color: #a06b00; }
-.pill-red { background: #fde8e5; color: #a02a1a; }
-.pill-gray { background: var(--surface-2); color: var(--text-2); }
 
-/* ── Status bar ──────────────────────────────────────────────────────── */
-.status-bar {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 18px;
-  border-top: 1px solid var(--border-light);
-  background: #fafbfc;
-}
+/* Status bar */
+.status-bar { display: flex; align-items: center; gap: 12px; padding: 10px 18px; border-top: 1px solid var(--border-light); background: #fafbfc; }
 .status-label { font-size: 11px; color: var(--text-2); }
 .status-val { font-size: 11px; font-weight: 500; }
-.status-val.ok { color: var(--teal); }
+.status-val.ok   { color: var(--teal); }
 .status-val.warn { color: var(--amber); }
-.status-val.err { color: var(--red); }
+.status-val.err  { color: var(--red); }
 .status-val.info { color: var(--blue); }
 .progress-rail { flex: 1; height: 3px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
-.progress-fill {
-  height: 100%; background: var(--blue); border-radius: 2px;
-  width: 0; transition: width 0.4s ease;
-}
+.progress-fill { height: 100%; background: var(--blue); border-radius: 2px; width: 0; }
 .progress-fill.anim { animation: rail 1.4s ease-in-out infinite; }
-@keyframes rail { 0% { width: 0; margin-left: 0; } 50% { width: 55%; margin-left: 22%; } 100% { width: 0; margin-left: 100%; } }
+@keyframes rail { 0%{width:0;margin-left:0} 50%{width:55%;margin-left:22%} 100%{width:0;margin-left:100%} }
 
-/* ── Log ─────────────────────────────────────────────────────────────── */
-.log {
-  background: var(--navy); border-radius: var(--radius);
-  padding: 12px 14px; font-family: var(--mono); font-size: 11px;
-  color: #7faac8; line-height: 1.9; max-height: 160px;
-  overflow-y: auto;
-}
-.log .ok { color: #4ecda4; }
+/* Log */
+.log { background: var(--navy); border-radius: var(--radius); padding: 12px 14px; font-family: var(--mono); font-size: 11px; color: #7faac8; line-height: 1.9; max-height: 160px; overflow-y: auto; }
+.log .ok   { color: #4ecda4; }
 .log .info { color: var(--blue-bright); }
 .log .warn { color: var(--amber); }
-.log .err { color: #f09090; }
+.log .err  { color: #f09090; }
 
-/* ── Device list ─────────────────────────────────────────────────────── */
+/* Device list — critical: no overflow:hidden on parent, pointer-events always on */
 .device-list { display: flex; flex-direction: column; gap: 6px; }
-.device-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 12px; border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm); cursor: pointer;
-  transition: border-color 0.12s, background 0.12s;
-}
-.device-row:hover { border-color: var(--blue); background: #f0f7ff; }
+.device-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); cursor: pointer; transition: border-color 0.12s, background 0.12s; position: relative; }
+.device-row:hover:not(.locked) { border-color: var(--blue); background: #f0f7ff; }
 .device-row.selected { border-color: var(--blue); background: #e8f2fd; }
-.d-icon {
-  width: 34px; height: 34px; border-radius: var(--radius-sm);
-  background: var(--navy); display: flex; align-items: center;
-  justify-content: center; color: var(--blue-bright); font-size: 15px; flex-shrink: 0;
-}
+.device-row.locked { cursor: not-allowed; background: #fffbf3; border-color: #f5dfa0; opacity: 0.75; }
+.d-icon { width: 34px; height: 34px; border-radius: var(--radius-sm); background: var(--navy); display: flex; align-items: center; justify-content: center; color: var(--blue-bright); font-size: 15px; flex-shrink: 0; }
 .d-name { font-size: 12px; font-weight: 500; color: var(--text); }
-.d-sub { font-size: 11px; color: var(--text-2); margin-top: 1px; }
+.d-sub  { font-size: 11px; color: var(--text-2); margin-top: 1px; }
 .d-serial { font-size: 10px; color: var(--text-3); font-family: var(--mono); margin-top: 1px; }
-.d-right { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.d-right { margin-left: auto; flex-shrink: 0; }
 
-/* ── Info grid ───────────────────────────────────────────────────────── */
+/* Info grid */
 .info-grid { display: grid; grid-template-columns: 130px 1fr; gap: 6px 14px; font-size: 12px; }
 .info-k { color: var(--text-2); }
 .info-v { color: var(--text); font-weight: 500; }
 .info-v.mono { font-family: var(--mono); font-size: 11px; }
 
-/* ── URL display ─────────────────────────────────────────────────────── */
-.url-box {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 8px 12px;
-  font-family: var(--mono); font-size: 12px;
-}
-.url-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+/* URL box */
+.url-box { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; font-family: var(--mono); font-size: 12px; }
+.url-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* ── Confirm banner ──────────────────────────────────────────────────── */
-.confirm-banner {
-  background: #d6f5e8; border: 1px solid #a8e8cc;
-  border-radius: var(--radius); padding: 14px 18px;
-  display: flex; align-items: flex-start; gap: 12px;
-}
-.confirm-icon { font-size: 22px; color: var(--teal); flex-shrink: 0; margin-top: 1px; }
+/* Banners */
+.confirm-banner { background: #d6f5e8; border: 1px solid #a8e8cc; border-radius: var(--radius); padding: 14px 18px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.confirm-icon { font-size: 22px; color: var(--teal); flex-shrink: 0; }
 .confirm-title { font-size: 13px; font-weight: 600; color: #085030; }
 .confirm-sub { font-size: 11px; color: #0d6e52; margin-top: 3px; line-height: 1.6; }
+.warn-banner { background: #fff8eb; border: 1px solid #f5dfa0; border-radius: var(--radius-sm); padding: 9px 12px; font-size: 11px; color: #7a5200; display: flex; align-items: center; gap: 8px; }
 
-/* ── Warn banner ─────────────────────────────────────────────────────── */
-.warn-banner {
-  background: #fff8eb; border: 1px solid #f5dfa0;
-  border-radius: var(--radius-sm); padding: 9px 12px;
-  font-size: 11px; color: #7a5200;
-  display: flex; align-items: center; gap: 8px;
-}
-
-/* ── Checklist ───────────────────────────────────────────────────────── */
+/* Check list */
 .check-list { display: flex; flex-direction: column; }
-.check-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 9px 0; border-bottom: 1px solid var(--border-light);
-  font-size: 12px;
-}
+.check-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; }
 .check-row:last-child { border-bottom: none; }
 .check-k { color: var(--text-2); }
 
-/* ── Tabs (for URL Builder) ──────────────────────────────────────────── */
-.panel { display: none; }
-.panel.active { display: contents; }
-
-/* ── Search ──────────────────────────────────────────────────────────── */
+/* Search */
 .search-wrap { position: relative; }
 .search-wrap input { padding-left: 32px; }
-.search-ico {
-  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-  font-size: 13px; color: var(--text-3); pointer-events: none;
-}
+.search-ico { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--text-3); pointer-events: none; }
 
-/* ── Divider ─────────────────────────────────────────────────────────── */
-.divider { height: 1px; background: var(--border-light); margin: 14px 0; }
+/* Spinner */
+.spin { display: inline-block; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── Responsive ──────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .layout { grid-template-columns: 1fr; grid-template-rows: 52px auto 1fr; }
   .sidebar { display: flex; overflow-x: auto; padding: 0; border-right: none; border-bottom: 1px solid var(--border-light); }
-  .sidebar-label, .sidebar-section { display: none; }
+  .sidebar-label { display: none; }
   .nav-item { white-space: nowrap; border-left: none; border-bottom: 3px solid transparent; }
   .nav-item.active { border-bottom-color: var(--blue); border-left-color: transparent; }
-  .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
   .grid-2 { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
-
 <div class="layout">
 
-  <!-- Topbar -->
   <header class="topbar">
     <div class="logo"><span>VIVO</span>POINT</div>
     <div class="topbar-sep"></div>
@@ -325,81 +174,57 @@ body {
     </div>
   </header>
 
-  <!-- Sidebar -->
   <nav class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Configuration</div>
-      <div class="nav-item active" data-panel="config" onclick="showPanel('config', this)">
-        <span class="nav-icon">⚙️</span> Controller Setup
-      </div>
-      <div class="nav-item" data-panel="urlbuilder" onclick="showPanel('urlbuilder', this)">
-        <span class="nav-icon">🔗</span> URL Builder
-      </div>
-      <div class="nav-item" data-panel="devinfo" onclick="showPanel('devinfo', this)">
-        <span class="nav-icon">📋</span> Device Info
-      </div>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">System</div>
-      <div class="nav-item" data-panel="log" onclick="showPanel('log', this)">
-        <span class="nav-icon">📟</span> Activity Log
-      </div>
-    </div>
+    <div class="sidebar-label">Configuration</div>
+    <div class="nav-item active" onclick="showPanel('config',this)">⚙️ &nbsp;Controller Setup</div>
+    <div class="nav-item" onclick="showPanel('urlbuilder',this)">🔗 &nbsp;URL Builder</div>
+    <div class="nav-item" onclick="showPanel('devinfo',this)">📋 &nbsp;Device Info</div>
+    <div class="sidebar-label" style="margin-top:8px">System</div>
+    <div class="nav-item" onclick="showPanel('log',this)">📟 &nbsp;Activity Log</div>
   </nav>
 
-  <!-- Main -->
-  <main class="main" id="main-content">
+  <main class="main">
 
-    <!-- ── CONFIG PANEL ───────────────────────────────────────────── -->
+    <!-- CONFIG -->
     <div id="panel-config">
 
-      <!-- Profile Discovery -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Profile Discovery</span>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span id="disc-status" style="font-size:11px;color:var(--text-3)"></span>
-            <button class="btn btn-primary" onclick="discoverProfiles()" id="btn-discover">
-              🔍 Discover profiles
-            </button>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span id="disc-status" style="font-size:11px;color:var(--text-3)"><span class="spin">⏳</span> Loading...</span>
+            <button class="btn" onclick="discoverProfiles()">🔄 Refresh</button>
           </div>
         </div>
         <div class="card-body">
-          <div class="grid-3">
+          <div class="grid-2">
             <div class="field">
               <label>Controller type</label>
               <select id="ctrl-select" onchange="onCtrlChange()" disabled>
-                <option value="">— discover first —</option>
+                <option value="">— loading profiles... —</option>
               </select>
             </div>
             <div class="field">
               <label>Profile (task group)</label>
-              <select id="profile-select" disabled>
-                <option value="">— select controller —</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Network</label>
-              <select id="network-select" disabled>
-                <option value="">— auto —</option>
+              <select id="profile-select" onchange="checkConfigBtn()" disabled>
+                <option value="">— select controller first —</option>
               </select>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Device Selection -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Device Selection</span>
-          <button class="btn" onclick="listDevices()" id="btn-list">📋 List devices</button>
+          <button class="btn" id="btn-list" onclick="listDevices()">📋 List devices</button>
         </div>
         <div class="card-body">
           <div class="inline" style="margin-bottom:12px">
-            <div class="field search-wrap" style="flex:1">
-              <label>Device name</label>
+            <div class="field search-wrap">
+              <label>Search</label>
               <span class="search-ico">🔎</span>
-              <input type="text" id="device-search" placeholder="Type to filter by name..." oninput="filterDevices()">
+              <input type="text" id="device-search" placeholder="Filter by name or serial..." oninput="filterDevices()">
             </div>
           </div>
           <div class="device-list" id="device-list">
@@ -408,62 +233,54 @@ body {
         </div>
       </div>
 
-      <!-- Property Tag -->
       <div class="card">
-        <div class="card-header">
-          <span class="card-title">Property Tag</span>
-        </div>
+        <div class="card-header"><span class="card-title">Property Tag</span></div>
         <div class="card-body">
           <div class="inline">
             <div class="field">
               <label>Property name</label>
-              <input type="text" id="prop-name" placeholder="e.g. Smith Pool, Apartment Complex A, Downtown Office">
+              <input type="text" id="prop-name" placeholder="e.g. Smith Pool, Apartment Complex A">
             </div>
             <button class="btn btn-primary" onclick="assignTag()">🏷️ Create &amp; assign tag</button>
           </div>
-          <div style="font-size:11px;color:var(--text-3);margin-top:6px">Creates a tag in RMS and assigns it to the selected device</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:6px">Creates an RMS tag and assigns it to the selected device</div>
         </div>
       </div>
 
-      <!-- Config Summary (shown after device selected) -->
       <div class="card" id="cfg-summary-card" style="display:none">
-        <div class="card-header">
-          <span class="card-title">Configuration Summary</span>
-          <span id="cfg-summary-status"></span>
-        </div>
-        <div class="card-body">
-          <div id="cfg-summary-body"></div>
-        </div>
+        <div class="card-header"><span class="card-title">Configuration Summary</span></div>
+        <div class="card-body" id="cfg-summary-body"></div>
         <div class="status-bar">
           <span class="status-label">Status:</span>
           <span class="status-val" id="cfg-status-val">Ready</span>
           <div class="progress-rail"><div class="progress-fill" id="cfg-progress"></div></div>
-          <button class="btn btn-success btn-lg" id="btn-configure" onclick="runConfiguration()" disabled>
-            ⚡ Configure controller
-          </button>
+          <button class="btn btn-success btn-lg" id="btn-configure" onclick="runConfiguration()" disabled>⚡ Configure controller</button>
           <button class="btn" onclick="testConnection()">🔌 Test connection</button>
         </div>
       </div>
 
-    </div><!-- /panel-config -->
+      <div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:0.5px;color:var(--text-3);text-transform:uppercase;margin-bottom:6px">Activity log</div>
+        <div class="log" id="main-log"></div>
+      </div>
 
-    <!-- ── URL BUILDER PANEL ──────────────────────────────────────── -->
+    </div>
+
+    <!-- URL BUILDER -->
     <div id="panel-urlbuilder" style="display:none;flex-direction:column;gap:16px">
-
       <div class="card">
         <div class="card-header">
           <span class="card-title">Device Information</span>
           <button class="btn" onclick="refreshDeviceInfo()">🔄 Refresh</button>
         </div>
         <div class="card-body">
-          <div class="info-grid" id="url-dev-info">
+          <div class="info-grid">
             <span class="info-k">Selected device</span><span class="info-v" id="ui-dev-name" style="color:var(--text-3)">No device selected</span>
             <span class="info-k">Serial number</span><span class="info-v mono" id="ui-dev-serial" style="color:var(--text-3)">Auto-filled</span>
             <span class="info-k">Mobile IP</span><span class="info-v mono" id="ui-dev-ip" style="color:var(--text-3)">Auto-filled</span>
           </div>
         </div>
       </div>
-
       <div class="card">
         <div class="card-header"><span class="card-title">Controller Settings</span></div>
         <div class="card-body">
@@ -485,49 +302,42 @@ body {
           </div>
         </div>
       </div>
-
       <div class="card">
         <div class="card-header"><span class="card-title">Generated URL</span></div>
         <div class="card-body">
           <div class="url-box">
-            <span style="font-size:14px">🔗</span>
+            <span>🔗</span>
             <span class="url-text" id="gen-url" style="color:var(--text-3)">http://&lt;mobile-ip&gt;:&lt;port&gt;</span>
             <button class="btn" onclick="copyUrl()">📋 Copy</button>
           </div>
         </div>
       </div>
-
-      <!-- VivoPoint section (shown after successful configure) -->
       <div class="card" id="vp-section" style="display:none">
         <div class="card-header"><span class="card-title">VivoPoint Configuration</span></div>
         <div class="card-body">
-          <div class="warn-banner" style="margin-bottom:12px">
-            ⚠️ Sensor labels changed from the default will not be translated.
-          </div>
-          <div class="grid-2" style="margin-bottom:12px">
+          <div class="warn-banner" style="margin-bottom:12px">⚠️ Sensor labels changed from the default will not be translated.</div>
+          <div class="grid-2">
             <div class="field">
               <label>Body of water</label>
-              <select id="bow-select" onchange="onBowChange()">
+              <select id="bow-select" onchange="document.getElementById('vp-uuid').value=''">
                 <option value="">— select —</option>
-                <option>BW1</option><option>BW2</option><option>BW3</option>
-                <option>BW4</option><option>BW5</option>
+                <option>BW1</option><option>BW2</option><option>BW3</option><option>BW4</option><option>BW5</option>
               </select>
             </div>
             <div class="field">
               <label>Device UUID</label>
-              <div class="inline" style="gap:6px">
-                <input type="text" id="vp-uuid" readonly class="mono" placeholder="Select body of water →" style="flex:1">
-                <button class="btn btn-primary" onclick="getUuid()" style="flex-shrink:0">Get UUID</button>
-                <button class="btn" onclick="copyUuid()" style="flex-shrink:0">📋</button>
+              <div style="display:flex;gap:6px">
+                <input type="text" id="vp-uuid" readonly class="mono" placeholder="Select body of water first" style="flex:1">
+                <button class="btn btn-primary" onclick="getUuid()">Get UUID</button>
+                <button class="btn" onclick="navigator.clipboard?.writeText(document.getElementById('vp-uuid').value)">📋</button>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-    </div><!-- /panel-urlbuilder -->
-
-    <!-- ── DEVICE INFO PANEL ──────────────────────────────────────── -->
+    <!-- DEVICE INFO -->
     <div id="panel-devinfo" style="display:none;flex-direction:column;gap:16px">
       <div class="card">
         <div class="card-header">
@@ -535,108 +345,140 @@ body {
           <button class="btn btn-primary" onclick="getDeviceInfo()">📥 Get device info</button>
         </div>
         <div class="card-body" id="devinfo-body">
-          <div style="font-size:12px;color:var(--text-3);padding:10px 0;text-align:center">
-            Select a device on the Controller Setup tab, then click "Get device info".
-          </div>
+          <div style="font-size:12px;color:var(--text-3);padding:10px 0;text-align:center">Select a device on Controller Setup, then click "Get device info".</div>
         </div>
       </div>
     </div>
 
-    <!-- ── LOG PANEL ──────────────────────────────────────────────── -->
+    <!-- LOG -->
     <div id="panel-log" style="display:none;flex-direction:column;gap:16px">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Activity Log</span>
+          <span class="card-title">Full Activity Log</span>
           <button class="btn" onclick="clearLog()">🗑️ Clear</button>
         </div>
         <div class="card-body">
-          <div class="log" id="main-log" style="max-height:500px">
-            <span class="info">System initialized. Connecting to RMS...</span>
-          </div>
+          <div class="log" id="full-log" style="max-height:600px"></div>
         </div>
       </div>
     </div>
 
   </main>
 </div>
-
 <script>
-// ── IP ranges & controller config ──────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// IP ranges
+// ─────────────────────────────────────────────────────────────────────────────
 const IP_RANGES = {
-  "Walchem":        {"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
+  "Walchem":         {"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
   "Walchem DualBody":{"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
-  "Chemtrol":       {"192.168.1.24":8585,"192.168.1.25":8586,"192.168.1.26":8587,"192.168.1.27":8588,"192.168.1.28":8589},
-  "BECs":           {"10.10.6.131":8585,"10.10.6.132":8586,"10.10.6.133":8587,"10.10.6.134":8588,"10.10.6.135":8589},
-  "ABB":            {"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
-  "Prominent":      {"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
+  "Chemtrol":        {"192.168.1.24":8585,"192.168.1.25":8586,"192.168.1.26":8587,"192.168.1.27":8588,"192.168.1.28":8589},
+  "BECs":            {"10.10.6.131":8585,"10.10.6.132":8586,"10.10.6.133":8587,"10.10.6.134":8588,"10.10.6.135":8589},
+  "ABB":             {"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
+  "Prominent":       {"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
 };
+const CTRL_KEYWORDS = ['walchem','chemtrol','becs','prominent','abb'];
 
-const CTRL_TAG_PATTERNS = ['walchem','chemtrol','becs','prominent','abb'];
-
-// ── App state ──────────────────────────────────────────────────────────────
-const S = {
-  devices: [],           // all RMS devices
-  devMap: {},            // serial → device
-  taskGroups: [],        // RMS task groups
-  networks: [],          // RMS networks
-  selectedDevice: null,
-  configuredSerials: new Set(),
-  deviceCtrlType: {},    // serial → ctrl type tag
-  discovered: false,
-};
-
-// ── Utilities ──────────────────────────────────────────────────────────────
-function ts() {
-  return new Date().toLocaleTimeString('en-US', {hour12:false});
+function inferCtrl(name) {
+  const n = (name||'').toLowerCase();
+  if (n.includes('walchem') && (n.includes('dual') || n.includes('dualbody'))) return 'Walchem DualBody';
+  if (n.includes('walchem'))   return 'Walchem';
+  if (n.includes('chemtrol'))  return 'Chemtrol';
+  if (n.includes('becs'))      return 'BECs';
+  if (n.includes('abb'))       return 'ABB';
+  if (n.includes('prominent')) return 'Prominent';
+  return null;
 }
 
-function log(msg, cls='') {
-  const box = document.getElementById('main-log');
-  const line = document.createElement('span');
-  line.className = cls;
-  line.textContent = `[${ts()}] ${msg}`;
-  box.appendChild(line);
-  box.appendChild(document.createTextNode('\n'));
-  box.scrollTop = box.scrollHeight;
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────────────────────────────────────
+const S = {
+  devices: [],
+  taskGroups: [],      // [{id, name, ctrl}]
+  selectedDevice: null,
+  configuredSerials: new Set(),
+  deviceCtrlType: {},  // serial -> ctrl type string
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Logging — writes to both inline log and full log panel simultaneously
+// ─────────────────────────────────────────────────────────────────────────────
+function log(msg, cls) {
+  const ts = new Date().toLocaleTimeString('en-US',{hour12:false});
+  ['main-log','full-log'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const span = document.createElement('span');
+    if (cls) span.className = cls;
+    span.textContent = `[${ts}] ${msg}`;
+    el.appendChild(span);
+    el.appendChild(document.createTextNode('\n'));
+    el.scrollTop = el.scrollHeight;
+  });
 }
 
 function clearLog() {
-  document.getElementById('main-log').innerHTML = '';
+  ['main-log','full-log'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=''; });
 }
 
-function setStatus(msg, cls='') {
+// ─────────────────────────────────────────────────────────────────────────────
+// Panel switching
+// ─────────────────────────────────────────────────────────────────────────────
+function showPanel(id, navEl) {
+  ['config','urlbuilder','devinfo','log'].forEach(p => {
+    const el = document.getElementById('panel-'+p);
+    if (!el) return;
+    if (p === id) {
+      el.style.display = (p === 'config') ? 'block' : 'flex';
+    } else {
+      el.style.display = 'none';
+    }
+  });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (navEl) navEl.classList.add('active');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Status / progress helpers
+// ─────────────────────────────────────────────────────────────────────────────
+function setStatus(msg, cls) {
   const el = document.getElementById('cfg-status-val');
+  if (!el) return;
   el.textContent = msg;
   el.className = 'status-val' + (cls ? ' '+cls : '');
 }
-
 function setProgress(on) {
-  document.getElementById('cfg-progress').classList.toggle('anim', on);
+  const el = document.getElementById('cfg-progress');
+  if (el) el.classList.toggle('anim', on);
 }
 
-function showPanel(id, el) {
-  ['config','urlbuilder','devinfo','log'].forEach(p => {
-    const panel = document.getElementById('panel-' + p);
-    if (panel) panel.style.display = (p === id) ? (p === 'config' ? 'contents' : 'flex') : 'none';
-    // config uses block children
-    if (p === id && id === 'config') panel.style.display = 'contents';
-  });
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if (el) el.classList.add('active');
-}
-
-// ── API calls to our Express proxy ────────────────────────────────────────
-async function api(path, opts={}) {
-  const r = await fetch('/api' + path, {
+// ─────────────────────────────────────────────────────────────────────────────
+// API proxy helper
+// ─────────────────────────────────────────────────────────────────────────────
+async function api(path, opts) {
+  opts = opts || {};
+  const fetchOpts = {
+    method: opts.method || 'GET',
     headers: {'Content-Type':'application/json'},
-    ...opts,
-    body: opts.body ? JSON.stringify(opts.body) : undefined,
-  });
-  return r.json();
+  };
+  if (opts.body) fetchOpts.body = JSON.stringify(opts.body);
+  const r = await fetch('/api' + path, fetchOpts);
+  const text = await r.text();
+  let json;
+  try { json = JSON.parse(text); } catch(e) { throw new Error('Non-JSON response: ' + text.slice(0,200)); }
+  if (!r.ok) throw new Error(json.error || ('HTTP ' + r.status));
+  return json;
 }
 
-// ── Health check ──────────────────────────────────────────────────────────
-async function checkHealth() {
+// ─────────────────────────────────────────────────────────────────────────────
+// Init — health check then auto-discover profiles
+// ─────────────────────────────────────────────────────────────────────────────
+async function init() {
   try {
     const data = await api('/health');
     const dot = document.getElementById('conn-dot');
@@ -644,98 +486,94 @@ async function checkHealth() {
     if (data.ok && data.token_set) {
       dot.classList.add('live');
       lbl.textContent = 'RMS connected';
-      log('RMS API token verified — ready', 'ok');
+      log('RMS API token verified', 'ok');
+      discoverProfiles();   // fire and forget — non-blocking
     } else {
+      dot.classList.add('err');
       lbl.textContent = 'Token missing';
-      log('RMS_API_TOKEN not set in environment', 'err');
+      log('RMS_API_TOKEN not set in Railway environment variables', 'err');
+      document.getElementById('disc-status').innerHTML = '<span style="color:var(--red)">✗ Token missing</span>';
     }
   } catch(e) {
+    document.getElementById('conn-dot').classList.add('err');
     document.getElementById('conn-label').textContent = 'Offline';
     log('Cannot reach backend: ' + e.message, 'err');
   }
 }
 
-// ── Discover profiles ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Profile discovery — auto-runs on load, also callable via Refresh button
+// KEY FIX: always shows all task groups in profile dropdown, not just matched
+// ─────────────────────────────────────────────────────────────────────────────
 async function discoverProfiles() {
-  const btn = document.getElementById('btn-discover');
-  btn.disabled = true; btn.textContent = '⏳ Discovering...';
-  setProgress(true);
-  document.getElementById('disc-status').textContent = '';
+  document.getElementById('disc-status').innerHTML = '<span class="spin">⏳</span> Loading profiles...';
+  document.getElementById('ctrl-select').disabled = true;
+  document.getElementById('profile-select').disabled = true;
   log('Fetching task groups from RMS...', 'info');
+
   try {
-    const [tgData, netData] = await Promise.all([
-      api('/task-groups'),
-      api('/networks'),
-    ]);
+    const tgData = await api('/task-groups');
+    const groups = (tgData.data || []);
 
-    S.taskGroups = tgData.data || [];
-    S.networks = netData.data || [];
-    log(`Found ${S.taskGroups.length} task groups`, 'ok');
-    log(`Found ${S.networks.length} networks`, 'ok');
+    S.taskGroups = groups.map(tg => ({ id: tg.id, name: tg.name, ctrl: inferCtrl(tg.name) }));
+    log('Loaded ' + S.taskGroups.length + ' task groups', 'ok');
 
-    // Populate controller dropdown from task group names
-    const ctrlSet = new Set();
-    S.taskGroups.forEach(tg => {
-      const name = (tg.name || '').toLowerCase();
-      if (name.includes('walchem dual')) ctrlSet.add('Walchem DualBody');
-      else if (name.includes('walchem')) ctrlSet.add('Walchem');
-      else if (name.includes('chemtrol')) ctrlSet.add('Chemtrol');
-      else if (name.includes('becs')) ctrlSet.add('BECs');
-      else if (name.includes('abb')) ctrlSet.add('ABB');
-      else if (name.includes('prominent')) ctrlSet.add('Prominent');
-    });
-
-    // Always include all controller types as fallback
-    ['Walchem','Walchem DualBody','Chemtrol','BECs','ABB','Prominent'].forEach(c => ctrlSet.add(c));
-
+    // Controller dropdown — always include all 6 known types
     const ctrlSel = document.getElementById('ctrl-select');
-    ctrlSel.innerHTML = '<option value="">— select controller —</option>';
-    [...ctrlSet].forEach(c => {
-      const o = document.createElement('option'); o.value = c; o.textContent = c;
+    ctrlSel.innerHTML = '<option value="">— select controller type —</option>';
+    ['Walchem','Walchem DualBody','Chemtrol','BECs','ABB','Prominent'].forEach(c => {
+      const o = document.createElement('option');
+      o.value = c; o.textContent = c;
       ctrlSel.appendChild(o);
     });
     ctrlSel.disabled = false;
 
-    // Networks
-    const netSel = document.getElementById('network-select');
-    netSel.innerHTML = '<option value="">— auto —</option>';
-    S.networks.forEach(n => {
-      const o = document.createElement('option'); o.value = n.id; o.textContent = n.name || n.id;
-      netSel.appendChild(o);
-    });
-    netSel.disabled = false;
+    document.getElementById('disc-status').innerHTML =
+      '<span style="color:var(--teal);font-weight:500">✓ ' + S.taskGroups.length + ' task groups loaded</span>';
 
-    S.discovered = true;
-    document.getElementById('disc-status').innerHTML = `<span style="color:var(--teal);font-weight:500">✓ ${S.taskGroups.length} profiles · ${S.networks.length} networks</span>`;
-    setStatus('Profiles discovered', 'ok');
   } catch(e) {
-    log('Discovery failed: ' + e.message, 'err');
-    setStatus('Discovery failed', 'err');
-  } finally {
-    btn.disabled = false; btn.innerHTML = '🔍 Discover profiles';
-    setProgress(false);
+    log('Profile discovery failed: ' + e.message, 'err');
+    document.getElementById('disc-status').innerHTML = '<span style="color:var(--red)">✗ Failed — click Refresh to retry</span>';
   }
 }
 
-// ── Controller type change ────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Controller type selected → populate profile dropdown
+// KEY FIX: if no task groups match the ctrl name, fall back to showing ALL
+// ─────────────────────────────────────────────────────────────────────────────
 function onCtrlChange() {
   const ctrl = document.getElementById('ctrl-select').value;
   const profileSel = document.getElementById('profile-select');
   profileSel.innerHTML = '<option value="">— select profile —</option>';
-  profileSel.disabled = !ctrl;
 
-  // Filter task groups matching this controller
-  const relevant = S.taskGroups.filter(tg => {
-    const n = (tg.name || '').toLowerCase();
-    if (!ctrl) return true;
-    const key = ctrl.toLowerCase().replace(' dualbody', ' dual');
-    return n.includes(key.split(' ')[0]);
-  });
+  if (!ctrl) {
+    profileSel.disabled = true;
+    checkConfigBtn(); updateSummary(); return;
+  }
 
-  relevant.forEach(tg => {
-    const o = document.createElement('option'); o.value = tg.id; o.textContent = tg.name;
+  // Match by inferred ctrl OR by keyword in name
+  const keyword = ctrl.toLowerCase().split(' ')[0]; // e.g. "walchem", "chemtrol"
+  let matched = S.taskGroups.filter(tg =>
+    tg.ctrl === ctrl || (tg.name||'').toLowerCase().includes(keyword)
+  );
+
+  // Fallback: if nothing matched (task groups might have different naming), show all
+  if (matched.length === 0) {
+    matched = S.taskGroups;
+    if (matched.length > 0) log('No task groups matched "' + ctrl + '" by name — showing all ' + matched.length, 'warn');
+  }
+
+  matched.forEach(tg => {
+    const o = document.createElement('option');
+    o.value = tg.id; o.textContent = tg.name;
     profileSel.appendChild(o);
   });
+
+  profileSel.disabled = matched.length === 0;
+  if (matched.length === 0) {
+    profileSel.innerHTML = '<option value="">— no task groups found —</option>';
+    log('No task groups available — check RMS profiles', 'warn');
+  }
 
   // Update URL builder
   document.getElementById('url-ctrl-type').value = ctrl;
@@ -757,87 +595,137 @@ function updateCtrlIpDropdown(ctrl) {
   buildUrl();
 }
 
-// ── List devices ──────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Device list
+// KEY FIX: listeners attached via addEventListener after innerHTML set, NOT
+// via onclick= attributes (avoids frozen-page / unclickable rows bug)
+// ─────────────────────────────────────────────────────────────────────────────
 async function listDevices() {
   const btn = document.getElementById('btn-list');
-  btn.disabled = true; btn.textContent = '⏳ Loading...';
-  log('Fetching device list from RMS...', 'info');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">⏳</span> Loading...';
+  log('Fetching devices from RMS...', 'info');
   try {
     const data = await api('/devices');
     S.devices = data.data || [];
-    S.devMap = {};
-    S.devices.forEach(d => { if (d.serial) S.devMap[d.serial] = d; });
-    log(`Loaded ${S.devices.length} devices`, 'ok');
+    // Pre-populate configured state from tags that came with the list
+    S.devices.forEach(d => {
+      (d.tags||[]).forEach(tag => {
+        const tn = (tag.name||'').toLowerCase();
+        CTRL_KEYWORDS.forEach(p => {
+          if (tn.includes(p)) {
+            S.configuredSerials.add(d.serial);
+            if (!S.deviceCtrlType[d.serial]) S.deviceCtrlType[d.serial] = tag.name;
+          }
+        });
+      });
+    });
+    log('Loaded ' + S.devices.length + ' devices', 'ok');
     renderDeviceList(S.devices);
-    document.getElementById('device-search').value = '';
   } catch(e) {
     log('Failed to load devices: ' + e.message, 'err');
   } finally {
-    btn.disabled = false; btn.textContent = '📋 List devices';
+    btn.disabled = false;
+    btn.textContent = '📋 List devices';
   }
 }
 
 function filterDevices() {
   const q = document.getElementById('device-search').value.toLowerCase();
-  const filtered = q ? S.devices.filter(d =>
+  renderDeviceList(q ? S.devices.filter(d =>
     (d.name||'').toLowerCase().includes(q) || (d.serial||'').includes(q)
-  ) : S.devices;
-  renderDeviceList(filtered);
+  ) : S.devices);
 }
 
 function renderDeviceList(list) {
-  const el = document.getElementById('device-list');
+  const container = document.getElementById('device-list');
+
   if (!list.length) {
-    el.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:8px 0">No devices found.</div>';
+    container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:8px 0">No devices found.</div>';
     return;
   }
-  el.innerHTML = list.slice(0, 50).map(d => {
-    const isConfigured = S.configuredSerials.has(d.serial);
-    const ctrlTag = S.deviceCtrlType[d.serial];
+
+  // Build DOM nodes directly — avoids innerHTML + event delegation issues entirely
+  container.innerHTML = '';
+  list.slice(0, 100).forEach(d => {
+    const configured = S.configuredSerials.has(d.serial);
     const isSelected = S.selectedDevice && S.selectedDevice.id === d.id;
-    const online = d.status === 1;
-    return `<div class="device-row${isSelected?' selected':''}" onclick="selectDevice('${d.id}')">
-      <div class="d-icon">📡</div>
-      <div style="flex:1">
-        <div class="d-name">${d.name || 'Unnamed'}</div>
-        <div class="d-sub">${online ? '🟢 Online' : '⚫ Offline'}</div>
-        <div class="d-serial">${d.serial || '—'}</div>
-      </div>
-      <div class="d-right">
-        ${isConfigured ? `<span class="pill pill-orange">🔒 ${ctrlTag||'Configured'}</span>` : '<span class="pill pill-blue">Ready</span>'}
-      </div>
-    </div>`;
-  }).join('');
+
+    const row = document.createElement('div');
+    row.className = 'device-row' + (isSelected ? ' selected' : '') + (configured ? ' locked' : '');
+
+    const iconEl = document.createElement('div');
+    iconEl.className = 'd-icon';
+    iconEl.textContent = '📡';
+
+    const infoEl = document.createElement('div');
+    infoEl.style.cssText = 'flex:1;min-width:0';
+    infoEl.innerHTML =
+      '<div class="d-name">' + escHtml(d.name||'Unnamed') + '</div>' +
+      '<div class="d-sub">' + (d.status===1 ? '🟢 Online' : '⚫ Offline') + '</div>' +
+      '<div class="d-serial">' + escHtml(d.serial||'—') + '</div>';
+
+    const rightEl = document.createElement('div');
+    rightEl.className = 'd-right';
+    if (configured) {
+      const pill = document.createElement('span');
+      pill.className = 'pill pill-orange';
+      pill.textContent = '🔒 ' + (S.deviceCtrlType[d.serial] || 'Configured');
+      rightEl.appendChild(pill);
+    } else {
+      const pill = document.createElement('span');
+      pill.className = 'pill pill-blue';
+      pill.textContent = 'Ready';
+      rightEl.appendChild(pill);
+    }
+
+    row.appendChild(iconEl);
+    row.appendChild(infoEl);
+    row.appendChild(rightEl);
+
+    // Attach click — closure over `d` and `configured` is safe here
+    row.addEventListener('click', function() {
+      if (configured) {
+        log('Device "' + d.name + '" is already configured as ' + (S.deviceCtrlType[d.serial]||'controller') + ' — cannot reconfigure', 'warn');
+        setStatus('Already configured — locked', 'warn');
+        return;
+      }
+      selectDevice(d.id);
+    });
+
+    container.appendChild(row);
+  });
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Select device — fetches full detail, checks tags, updates all tabs
+// ─────────────────────────────────────────────────────────────────────────────
 async function selectDevice(deviceId) {
   const d = S.devices.find(x => x.id === deviceId);
   if (!d) return;
 
   S.selectedDevice = d;
-  log(`Selected: ${d.name} (${d.serial})`, 'info');
-  renderDeviceList(S.devices.filter(x => {
-    const q = document.getElementById('device-search').value.toLowerCase();
-    return !q || (x.name||'').toLowerCase().includes(q) || (x.serial||'').includes(q);
-  }));
+  log('Selected: ' + d.name + ' (' + d.serial + ')', 'info');
 
-  // Fetch full device details to check tags & mobile IP
+  // Re-render list to show selected state
+  filterDevices();
+
   try {
     const data = await api('/devices/' + deviceId);
-    const details = data.data || {};
-    d.mobile_ip = details.mobile_ip || '';
-    d.tags = details.tags || [];
-    d.model = details.model || '';
-    d.imei = details.imei || '';
-    d.firmware = details.firmware || '';
-    d.signal = details.signal || '';
-    d.operator = details.operator || '';
-    d.connection_state = details.connection_state || '';
+    const det = data.data || {};
+    d.mobile_ip = det.mobile_ip || '';
+    d.tags      = det.tags || [];
+    d.model     = det.model || '';
+    d.imei      = det.imei || '';
+    d.firmware  = det.firmware || '';
+    d.signal    = det.signal || '';
+    d.operator  = det.operator || '';
+    d.clean_ip  = (d.mobile_ip||'').split('/')[0];
 
-    // Check for controller tags
+    // Check tags from fresh detail
     d.tags.forEach(tag => {
       const tn = (tag.name||'').toLowerCase();
-      CTRL_TAG_PATTERNS.forEach(p => {
+      CTRL_KEYWORDS.forEach(p => {
         if (tn.includes(p)) {
           S.configuredSerials.add(d.serial);
           S.deviceCtrlType[d.serial] = tag.name;
@@ -846,49 +734,51 @@ async function selectDevice(deviceId) {
     });
 
     if (S.configuredSerials.has(d.serial)) {
-      log(`Device already configured — tag: ${S.deviceCtrlType[d.serial]}`, 'warn');
+      log('⚠ Tagged as "' + S.deviceCtrlType[d.serial] + '" — device is already configured', 'warn');
+      setStatus('Already configured — locked', 'warn');
+    } else {
+      log('Ready — mobile IP: ' + (d.clean_ip||'none'), 'ok');
+      setStatus('Device selected', 'info');
     }
 
-    const cleanIp = (d.mobile_ip || '').split('/')[0];
-    d.clean_ip = cleanIp;
-
     updateUrlTab(d);
+    filterDevices();  // re-render with updated lock state
+    document.getElementById('cfg-summary-card').style.display = '';
     updateSummary();
     checkConfigBtn();
 
-    document.getElementById('cfg-summary-card').style.display = '';
-
-    // Show VivoPoint section if configured (not Prominent)
-    const ctrlTag = (S.deviceCtrlType[d.serial] || '').toLowerCase();
+    // VivoPoint section: show if configured and not Prominent
+    const ctrlTag = (S.deviceCtrlType[d.serial]||'').toLowerCase();
     if (S.configuredSerials.has(d.serial) && !ctrlTag.includes('prominent')) {
       document.getElementById('vp-section').style.display = '';
     }
 
   } catch(e) {
-    log('Failed to load device details: ' + e.message, 'err');
+    log('Failed to load device detail: ' + e.message, 'err');
   }
 }
 
-// ── URL Builder ───────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// URL Builder
+// ─────────────────────────────────────────────────────────────────────────────
 function updateUrlTab(d) {
-  document.getElementById('ui-dev-name').textContent = d.name || '—';
+  document.getElementById('ui-dev-name').textContent = d.name||'—';
   document.getElementById('ui-dev-name').style.color = 'var(--text)';
-  document.getElementById('ui-dev-serial').textContent = d.serial || '—';
+  document.getElementById('ui-dev-serial').textContent = d.serial||'—';
   document.getElementById('ui-dev-serial').style.color = 'var(--text)';
-  const ip = d.clean_ip || d.mobile_ip || '';
-  document.getElementById('ui-dev-ip').textContent = ip || 'No mobile IP';
+  const ip = d.clean_ip||'';
+  document.getElementById('ui-dev-ip').textContent = ip||'No mobile IP';
   document.getElementById('ui-dev-ip').style.color = ip ? 'var(--teal)' : 'var(--amber)';
   buildUrl();
 }
 
 function buildUrl() {
-  const ip = document.getElementById('ctrl-ip-select').value;
+  const ip   = document.getElementById('ctrl-ip-select').value;
   const ctrl = document.getElementById('ctrl-select').value;
-  const mip = S.selectedDevice?.clean_ip || '';
-  let port = '';
-  if (ctrl && ip && IP_RANGES[ctrl]) port = IP_RANGES[ctrl][ip] || '';
-  document.getElementById('url-port').value = port || '';
-  const url = (mip && port) ? `http://${mip}:${port}` : 'http://<mobile-ip>:<port>';
+  const mip  = S.selectedDevice ? (S.selectedDevice.clean_ip||'') : '';
+  const port = (ctrl && ip && IP_RANGES[ctrl]) ? (IP_RANGES[ctrl][ip]||'') : '';
+  document.getElementById('url-port').value = port||'';
+  const url = (mip && port) ? 'http://'+mip+':'+port : 'http://<mobile-ip>:<port>';
   const el = document.getElementById('gen-url');
   el.textContent = url;
   el.style.color = (mip && port) ? 'var(--text)' : 'var(--text-3)';
@@ -896,125 +786,126 @@ function buildUrl() {
 
 function copyUrl() {
   const url = document.getElementById('gen-url').textContent;
-  navigator.clipboard?.writeText(url);
+  navigator.clipboard && navigator.clipboard.writeText(url);
   log('Copied URL: ' + url, 'info');
 }
 
-function copyUuid() {
-  const uuid = document.getElementById('vp-uuid').value;
-  if (uuid) navigator.clipboard?.writeText(uuid);
-}
-
 async function refreshDeviceInfo() {
-  if (!S.selectedDevice) { log('No device selected', 'warn'); return; }
-  await selectDevice(S.selectedDevice.id);
+  if (S.selectedDevice) await selectDevice(S.selectedDevice.id);
 }
 
-function onBowChange() {
-  document.getElementById('vp-uuid').value = '';
-}
-
-async function getUuid() {
+function getUuid() {
   const bow = document.getElementById('bow-select').value;
   if (!bow || !S.selectedDevice) return;
-  log(`Getting UUID for ${bow}...`, 'info');
-  // UUID is the device ID from VivoPoint — in a real integration this would
-  // call the VivoPoint API. For now we expose the device ID resolved from RMS.
-  document.getElementById('vp-uuid').value = S.selectedDevice.id || 'UUID not available';
-  log(`UUID set for ${bow}`, 'ok');
+  document.getElementById('vp-uuid').value = S.selectedDevice.id||'—';
+  log('UUID set for ' + bow, 'ok');
 }
 
-// ── Summary ───────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Config summary + button state
+// ─────────────────────────────────────────────────────────────────────────────
 function updateSummary() {
   const d = S.selectedDevice;
-  const ctrl = document.getElementById('ctrl-select').value;
-  const profileSel = document.getElementById('profile-select');
-  const profile = profileSel.options[profileSel.selectedIndex]?.text || '—';
   if (!d) return;
-
+  const ctrl       = document.getElementById('ctrl-select').value;
+  const profileSel = document.getElementById('profile-select');
+  const profile    = (profileSel.selectedIndex > 0) ? profileSel.options[profileSel.selectedIndex].text : '—';
   const configured = S.configuredSerials.has(d.serial);
-  document.getElementById('cfg-summary-body').innerHTML = `
-    <div class="check-list">
-      <div class="check-row"><span class="check-k">Device</span><span style="font-weight:500">${d.name||'—'}</span></div>
-      <div class="check-row"><span class="check-k">Serial</span><span style="font-family:var(--mono);font-size:11px">${d.serial||'—'}</span></div>
-      <div class="check-row"><span class="check-k">Mobile IP</span><span style="font-family:var(--mono);font-size:11px">${d.clean_ip||'—'}</span></div>
-      <div class="check-row"><span class="check-k">Controller type</span><span>${ctrl||'—'}</span></div>
-      <div class="check-row"><span class="check-k">Profile (task group)</span><span>${profile}</span></div>
-      <div class="check-row"><span class="check-k">Already configured</span><span>${configured?`<span class="pill pill-orange">🔒 ${S.deviceCtrlType[d.serial]||'Yes'}</span>`:'<span class="pill pill-green">No — ready</span>'}</span></div>
-    </div>`;
+
+  document.getElementById('cfg-summary-body').innerHTML =
+    '<div class="check-list">' +
+    '<div class="check-row"><span class="check-k">Device</span><span style="font-weight:500">' + escHtml(d.name||'—') + '</span></div>' +
+    '<div class="check-row"><span class="check-k">Serial</span><span style="font-family:var(--mono);font-size:11px">' + escHtml(d.serial||'—') + '</span></div>' +
+    '<div class="check-row"><span class="check-k">Mobile IP</span><span style="font-family:var(--mono);font-size:11px">' + escHtml(d.clean_ip||'—') + '</span></div>' +
+    '<div class="check-row"><span class="check-k">Controller type</span><span>' + escHtml(ctrl||'—') + '</span></div>' +
+    '<div class="check-row"><span class="check-k">Profile</span><span>' + escHtml(profile) + '</span></div>' +
+    '<div class="check-row"><span class="check-k">Status</span><span>' +
+      (configured
+        ? '<span class="pill pill-orange">🔒 Already configured — ' + escHtml(S.deviceCtrlType[d.serial]||'') + '</span>'
+        : '<span class="pill pill-green">✓ Ready to configure</span>') +
+    '</span></div>' +
+    '</div>';
 }
 
 function checkConfigBtn() {
-  const ctrl = document.getElementById('ctrl-select').value;
+  const ctrl    = document.getElementById('ctrl-select').value;
   const profile = document.getElementById('profile-select').value;
-  const d = S.selectedDevice;
+  const d       = S.selectedDevice;
   const configured = d && S.configuredSerials.has(d.serial);
   const btn = document.getElementById('btn-configure');
-  const ready = d && ctrl && profile && !configured;
+  const ready = !!(d && ctrl && profile && !configured);
   btn.disabled = !ready;
   if (configured) {
-    btn.textContent = '🔒 Already configured';
+    btn.innerHTML = '🔒 Device already configured';
   } else {
     btn.innerHTML = '⚡ Configure controller';
   }
 }
 
-// ── Run configuration ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Run configuration
+// ─────────────────────────────────────────────────────────────────────────────
 async function runConfiguration() {
-  const d = S.selectedDevice;
-  const ctrl = document.getElementById('ctrl-select').value;
+  const d          = S.selectedDevice;
+  const ctrl       = document.getElementById('ctrl-select').value;
   const profileSel = document.getElementById('profile-select');
-  const taskGroupId = profileSel.value;
-  const profileName = profileSel.options[profileSel.selectedIndex]?.text || taskGroupId;
+  const taskGroupId= profileSel.value;
+  const profileName= (profileSel.selectedIndex > 0) ? profileSel.options[profileSel.selectedIndex].text : taskGroupId;
+
   if (!d || !ctrl || !taskGroupId) return;
 
+  // Hard guard — never reconfigure
+  if (S.configuredSerials.has(d.serial)) {
+    log('Blocked — ' + d.name + ' is already configured as ' + (S.deviceCtrlType[d.serial]||'controller'), 'warn');
+    setStatus('Already configured — locked', 'warn');
+    return;
+  }
+
   const btn = document.getElementById('btn-configure');
-  btn.disabled = true; btn.textContent = '⏳ Configuring...';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">⏳</span> Configuring...';
   setProgress(true);
   setStatus('Running configuration...', 'info');
-
-  log(`Starting configuration for ${d.name} (${d.serial})`, 'info');
-  log(`Controller: ${ctrl} · Profile: ${profileName}`, 'info');
+  log('Starting: ' + d.name + ' (' + d.serial + ') → ' + ctrl + ' / ' + profileName, 'info');
 
   try {
-    const result = await api(`/devices/${d.id}/configure`, {
+    const result = await api('/devices/' + d.id + '/configure', {
       method: 'POST',
       body: { task_group_id: taskGroupId, device_serial: d.serial }
     });
-
     if (result.error) throw new Error(result.error);
 
-    log(`✓ Configuration started successfully`, 'ok');
-    log(`✓ RMS running tasks in background`, 'ok');
-    log(`✓ Device ${d.serial} marked as configured`, 'ok');
+    log('✓ Configuration started successfully', 'ok');
+    log('✓ RMS executing tasks in background', 'ok');
+    log('✓ ' + d.serial + ' locked from reconfiguration', 'ok');
 
+    // Lock it
     S.configuredSerials.add(d.serial);
     S.deviceCtrlType[d.serial] = ctrl;
 
     setStatus('Configuration started!', 'ok');
     setProgress(false);
-    btn.textContent = '✅ Configured successfully';
+    btn.innerHTML = '✅ Configured successfully';
 
-    // Show VivoPoint section (not for Prominent)
     if (!ctrl.toLowerCase().includes('prominent')) {
       document.getElementById('vp-section').style.display = '';
     }
 
-    // Update summary with confirm banner
-    document.getElementById('cfg-summary-body').innerHTML = `
-      <div class="confirm-banner" style="margin-bottom:14px">
-        <div class="confirm-icon">✅</div>
-        <div>
-          <div class="confirm-title">Configuration started successfully</div>
-          <div class="confirm-sub">Device: ${d.name} · Profile: ${profileName}<br>RMS is executing all tasks in the background. This device is now locked from reconfiguration.</div>
-        </div>
-      </div>` + document.getElementById('cfg-summary-body').innerHTML;
+    // Prepend confirm banner to summary
+    const existingBody = document.getElementById('cfg-summary-body').innerHTML;
+    document.getElementById('cfg-summary-body').innerHTML =
+      '<div class="confirm-banner">' +
+        '<div class="confirm-icon">✅</div>' +
+        '<div>' +
+          '<div class="confirm-title">Configuration started successfully</div>' +
+          '<div class="confirm-sub">Device: ' + escHtml(d.name) + ' · Profile: ' + escHtml(profileName) + '<br>RMS is executing all tasks in the background. This device is now locked.</div>' +
+        '</div>' +
+      '</div>' + existingBody;
 
-    updateSummary();
-    renderDeviceList(S.devices);
+    filterDevices();
 
   } catch(e) {
-    log(`Configuration failed: ${e.message}`, 'err');
+    log('Configuration failed: ' + e.message, 'err');
     setStatus('Configuration failed', 'err');
     setProgress(false);
     btn.disabled = false;
@@ -1022,79 +913,71 @@ async function runConfiguration() {
   }
 }
 
-// ── Test connection ───────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Misc
+// ─────────────────────────────────────────────────────────────────────────────
 async function testConnection() {
-  log('Testing RMS API connection...', 'info');
+  log('Testing RMS connection...', 'info');
   try {
-    const data = await api('/health');
-    if (data.ok) {
-      log('Connection OK — RMS API reachable', 'ok');
-      setStatus('Connected', 'ok');
-    } else {
-      log('Connection failed — check RMS_API_TOKEN', 'err');
-    }
-  } catch(e) {
-    log('Connection error: ' + e.message, 'err');
-  }
+    const d = await api('/health');
+    if (d.ok && d.token_set) { log('Connection OK', 'ok'); setStatus('Connected', 'ok'); }
+    else { log('Token not configured', 'err'); }
+  } catch(e) { log('Connection error: ' + e.message, 'err'); }
 }
 
-// ── Assign tag ────────────────────────────────────────────────────────────
 async function assignTag() {
   const name = document.getElementById('prop-name').value.trim();
-  if (!name) { log('Enter a property name first', 'warn'); return; }
+  if (!name)             { log('Enter a property name first', 'warn'); return; }
   if (!S.selectedDevice) { log('Select a device first', 'warn'); return; }
-  log(`Creating tag: "${name}"...`, 'info');
+  log('Creating tag: "' + name + '"...', 'info');
   try {
-    // Create tag
     const tagRes = await api('/tags', { method: 'POST', body: { name } });
-    const tagId = (tagRes.data || tagRes).id;
-    log(`Tag created (id: ${tagId})`, 'ok');
-    // Assign to device
-    await api(`/devices/${S.selectedDevice.id}/tags`, {
-      method: 'POST', body: { tag_ids: [tagId] }
-    });
-    log(`Tag "${name}" assigned to ${S.selectedDevice.name}`, 'ok');
-  } catch(e) {
-    log('Tag assignment failed: ' + e.message, 'err');
-  }
+    const tagId  = ((tagRes.data||tagRes).id);
+    await api('/devices/' + S.selectedDevice.id + '/tags', { method: 'POST', body: { tag_ids: [tagId] } });
+    log('Tag "' + name + '" assigned to ' + S.selectedDevice.name, 'ok');
+  } catch(e) { log('Tag assignment failed: ' + e.message, 'err'); }
 }
 
-// ── Device info tab ───────────────────────────────────────────────────────
 async function getDeviceInfo() {
   if (!S.selectedDevice) {
-    document.getElementById('devinfo-body').innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:10px 0;text-align:center">Select a device on the Controller Setup tab first.</div>';
+    document.getElementById('devinfo-body').innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:10px 0;text-align:center">Select a device on Controller Setup first.</div>';
     return;
   }
   const d = S.selectedDevice;
-  document.getElementById('devinfo-body').innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:8px 0">Loading...</div>';
+  document.getElementById('devinfo-body').innerHTML = '<div style="font-size:12px;color:var(--text-3)">Loading...</div>';
   try {
     const data = await api('/devices/' + d.id);
     const det = data.data || {};
-    const status = det.status === 1 ? '🟢 Online' : '⚫ Offline';
     const ip = (det.mobile_ip||'').split('/')[0];
-    document.getElementById('devinfo-body').innerHTML = `
-      <div class="info-grid">
-        <span class="info-k">Device name</span><span class="info-v">${det.name||d.name}</span>
-        <span class="info-k">Serial</span><span class="info-v mono">${d.serial||'—'}</span>
-        <span class="info-k">Model</span><span class="info-v">${det.model||'—'}</span>
-        <span class="info-k">Status</span><span class="info-v">${status}</span>
-        <span class="info-k">Mobile IP</span><span class="info-v mono">${ip||'—'}</span>
-        <span class="info-k">IMEI</span><span class="info-v mono">${det.imei||'—'}</span>
-        <span class="info-k">MAC</span><span class="info-v mono">${det.mac||'—'}</span>
-        <span class="info-k">Firmware</span><span class="info-v">${det.firmware||'—'}</span>
-        <span class="info-k">Operator</span><span class="info-v">${det.operator||'—'}</span>
-        <span class="info-k">Signal</span><span class="info-v">${det.signal ? det.signal+' dBm' : '—'}</span>
-        <span class="info-k">Tags</span><span class="info-v">${(det.tags||[]).map(t=>t.name).join(', ')||'None'}</span>
-        <span class="info-k">Configuration</span><span class="info-v">${S.configuredSerials.has(d.serial)?`<span class="pill pill-orange">🔒 ${S.deviceCtrlType[d.serial]||'Configured'}</span>`:'<span class="pill pill-blue">Not yet configured</span>'}</span>
-      </div>`;
-    log(`Device info loaded for ${d.name}`, 'ok');
+    document.getElementById('devinfo-body').innerHTML =
+      '<div class="info-grid">' +
+      '<span class="info-k">Device name</span><span class="info-v">'      + escHtml(det.name||d.name) + '</span>' +
+      '<span class="info-k">Serial</span><span class="info-v mono">'      + escHtml(d.serial||'—') + '</span>' +
+      '<span class="info-k">Model</span><span class="info-v">'            + escHtml(det.model||'—') + '</span>' +
+      '<span class="info-k">Status</span><span class="info-v">'           + (det.status===1?'🟢 Online':'⚫ Offline') + '</span>' +
+      '<span class="info-k">Mobile IP</span><span class="info-v mono">'   + escHtml(ip||'—') + '</span>' +
+      '<span class="info-k">IMEI</span><span class="info-v mono">'        + escHtml(det.imei||'—') + '</span>' +
+      '<span class="info-k">MAC</span><span class="info-v mono">'         + escHtml(det.mac||'—') + '</span>' +
+      '<span class="info-k">Firmware</span><span class="info-v">'         + escHtml(det.firmware||'—') + '</span>' +
+      '<span class="info-k">Operator</span><span class="info-v">'         + escHtml(det.operator||'—') + '</span>' +
+      '<span class="info-k">Signal</span><span class="info-v">'           + (det.signal ? det.signal+' dBm' : '—') + '</span>' +
+      '<span class="info-k">Tags</span><span class="info-v">'             + ((det.tags||[]).map(t=>escHtml(t.name)).join(', ')||'None') + '</span>' +
+      '<span class="info-k">Configuration</span><span class="info-v">'    +
+        (S.configuredSerials.has(d.serial)
+          ? '<span class="pill pill-orange">🔒 ' + escHtml(S.deviceCtrlType[d.serial]||'Configured') + '</span>'
+          : '<span class="pill pill-blue">Not yet configured</span>') +
+      '</span>' +
+      '</div>';
+    log('Device info loaded for ' + d.name, 'ok');
   } catch(e) {
-    document.getElementById('devinfo-body').innerHTML = `<div style="color:var(--red);font-size:12px">Error: ${e.message}</div>`;
+    document.getElementById('devinfo-body').innerHTML = '<div style="color:var(--red);font-size:12px">Error: ' + escHtml(e.message) + '</div>';
   }
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────
-checkHealth();
+// ─────────────────────────────────────────────────────────────────────────────
+// Boot
+// ─────────────────────────────────────────────────────────────────────────────
+init();
 </script>
 </body>
 </html>
