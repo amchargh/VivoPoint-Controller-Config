@@ -1181,13 +1181,9 @@ async function runUuidDownloader() {
     if (!uuidGroup) throw new Error('UUID Downloader task group not found in RMS. Check that it exists and contains "uuid" and "download" in the name.');
     log('[UUID] Found task group: "' + uuidGroup.name + '" (id: ' + uuidGroup.id + ')', 'ok');
 
-    // Step 2: Execute the UUID Downloader task group on the device
+    // Step 2: Get first task then execute — mirrors Python exactly, no add-device step
     uuidStatus('Executing UUID Downloader task on device...');
-    const execRes = await api('/devices/' + d.id + '/configure', {
-      method: 'POST',
-      body: { task_group_id: uuidGroup.id, device_serial: d.serial }
-    });
-    if (execRes.error) throw new Error(execRes.error);
+    await getFirstTaskAndExecute(d.id, uuidGroup.id, '[UUID] ');
     log('[UUID] Task group executed successfully', 'ok');
 
     // Step 3: Poll RMS Files for device_id_{BW#}_{serial}_* (up to 6 retries, 2s apart)
@@ -1266,6 +1262,29 @@ async function runUuidDownloader() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Shared helper — mirrors Python get_first_task_id() + execute_first_task()
+// Step 1: GET /task-groups/:groupId/first-task  (server filters global tasks by group_id)
+// Step 2: POST /devices/:deviceId/execute-task  (device_id array + task_id, no add-device step)
+// ─────────────────────────────────────────────────────────────────────────────
+async function getFirstTaskAndExecute(deviceRmsId, taskGroupId, logPrefix) {
+  // Step 1 — get first task ID for this group
+  log(logPrefix + 'Getting first task for group ' + taskGroupId + '...', 'info');
+  const taskRes = await api('/task-groups/' + taskGroupId + '/first-task');
+  if (taskRes.error) throw new Error(taskRes.error);
+  const taskId = taskRes.task_id;
+  log(logPrefix + 'First task: ' + taskRes.task_name + ' (id: ' + taskId + ')', 'ok');
+
+  // Step 2 — execute: POST with device_id array + task_id (mirrors Python exactly)
+  log(logPrefix + 'Executing task group ' + taskGroupId + ' on device ' + deviceRmsId + '...', 'info');
+  const execRes = await api('/devices/' + deviceRmsId + '/execute-task', {
+    method: 'POST',
+    body: { task_group_id: taskGroupId, task_id: taskId }
+  });
+  if (execRes.error) throw new Error(execRes.error);
+  return execRes;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Run configuration — only callable via button, never automatic
 // ─────────────────────────────────────────────────────────────────────────────
 async function runConfiguration() {
@@ -1302,17 +1321,12 @@ async function runConfiguration() {
   resultEl.innerHTML = '';
 
   try {
-    const result = await api('/devices/' + d.id + '/configure', {
-      method: 'POST',
-      body: { task_group_id: taskGroupId, device_serial: d.serial }
-    });
-    if (result.error) throw new Error(result.error);
+    await getFirstTaskAndExecute(d.id, parseInt(taskGroupId, 10), '[CFG] ');
 
     log('✓ Configuration started successfully', 'ok');
     log('✓ RMS executing tasks in background', 'ok');
     log('✓ ' + d.serial + ' locked — cannot be reconfigured', 'ok');
 
-    // Lock it
     S.configuredSerials.add(d.serial);
     S.deviceCtrlTag[d.serial] = ctrl;
 
@@ -1329,7 +1343,7 @@ async function runConfiguration() {
         '</div>' +
       '</div>';
 
-    filterDevices(); // re-render device list with new locked state
+    filterDevices();
 
   } catch(e) {
     log('Configuration failed: ' + e.message, 'err');

@@ -24,15 +24,13 @@ app.get("/api/health", (req, res) => {
 });
 
 // ── Devices ───────────────────────────────────────────────────────────────────
-// Paginate through all devices (up to 500)
 app.get("/api/devices", async (req, res) => {
   try {
     const all = [];
     for (let offset = 0; offset < 500; offset += 100) {
-      const r = await fetch(
-        `${RMS_BASE}/devices?offset=${offset}&limit=100`,
-        { headers: rmsHeaders() }
-      );
+      const r = await fetch(`${RMS_BASE}/devices?offset=${offset}&limit=100`, {
+        headers: rmsHeaders(),
+      });
       if (!r.ok) break;
       const data = await r.json();
       const devices = data.data || [];
@@ -46,7 +44,6 @@ app.get("/api/devices", async (req, res) => {
   }
 });
 
-// Single device detail (includes mobile_ip, tags, status)
 app.get("/api/devices/:id", async (req, res) => {
   try {
     const r = await fetch(`${RMS_BASE}/devices/${req.params.id}`, {
@@ -59,7 +56,6 @@ app.get("/api/devices/:id", async (req, res) => {
   }
 });
 
-// Device task history
 app.get("/api/devices/:id/tasks/history", async (req, res) => {
   try {
     const limit = req.query.limit || 50;
@@ -74,62 +70,97 @@ app.get("/api/devices/:id/tasks/history", async (req, res) => {
   }
 });
 
-// ── Task Groups (Profiles) ────────────────────────────────────────────────────
+// ── Task Groups ───────────────────────────────────────────────────────────────
+// Paginate all pages so no group is missed
 app.get("/api/task-groups", async (req, res) => {
   try {
-    const r = await fetch(`${RMS_BASE}/devices/tasks/groups`, {
-      headers: rmsHeaders(),
-    });
-    const data = await r.json();
-    res.status(r.status).json(data);
+    const all = [];
+    for (let page = 1; page <= 20; page++) {
+      const r = await fetch(
+        `${RMS_BASE}/devices/tasks/groups?page=${page}&limit=100`,
+        { headers: rmsHeaders() }
+      );
+      if (!r.ok) break;
+      const data = await r.json();
+      const groups = data.data || [];
+      all.push(...groups);
+      if (groups.length < 100) break;
+    }
+    res.json({ data: all });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
-// Execute a task group on a device
-app.post("/api/devices/:deviceId/configure", async (req, res) => {
-  const { task_group_id, device_serial } = req.body;
-  if (!task_group_id || !device_serial) {
-    return res.status(400).json({ error: "task_group_id and device_serial required" });
-  }
+// ── Get first task ID inside a group ─────────────────────────────────────────
+// Mirrors Python get_first_task_id():
+//   GET /devices/tasks?offset=X&limit=200  (global tasks list)
+//   Filter by group_id == task_group_id
+//   Return lowest task id
+app.get("/api/task-groups/:groupId/first-task", async (req, res) => {
+  const groupId = parseInt(req.params.groupId, 10);
   try {
-    // Add device to task group
-    const addR = await fetch(
-      `${RMS_BASE}/devices/tasks/groups/${task_group_id}/devices`,
-      {
-        method: "POST",
-        headers: rmsHeaders(),
-        body: JSON.stringify({ serials: [device_serial] }),
+    const groupTasks = [];
+    for (let offset = 0; offset < 1000; offset += 200) {
+      const r = await fetch(
+        `${RMS_BASE}/devices/tasks?offset=${offset}&limit=200`,
+        { headers: rmsHeaders() }
+      );
+      if (!r.ok) {
+        console.error(`GET /devices/tasks offset=${offset} → ${r.status}`);
+        break;
       }
-    );
-    if (!addR.ok) {
-      const t = await addR.text();
-      return res.status(addR.status).json({ error: `Failed to add device: ${t}` });
+      const data = await r.json();
+      const tasks = data.data || [];
+      const matching = tasks.filter((t) => t.group_id === groupId);
+      groupTasks.push(...matching);
+      if (tasks.length < 200) break;
     }
 
-    // Execute task group
-    const execR = await fetch(
+    if (!groupTasks.length) {
+      return res.status(404).json({ error: `No tasks found in group ${groupId}` });
+    }
+
+    // Deduplicate and sort by id ascending — take the first
+    const seen = new Set();
+    const unique = groupTasks
+      .filter((t) => { if (seen.has(t.id)) return false; seen.add(t.id); return true; })
+      .sort((a, b) => a.id - b.id);
+
+    const first = unique[0];
+    res.json({ task_id: first.id, task_name: first.name, group_id: groupId });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── Execute a task group on a device ─────────────────────────────────────────
+// Mirrors Python execute_first_task() / execute_configuration_simple():
+//   POST /devices/tasks/groups/{group_id}
+//   Body: { device_id: [device_id], tasks: [{ task_id, variables: [] }] }
+// No "add device to group" step — that's what was causing RESOURCE_NOT_FOUND
+app.post("/api/devices/:deviceId/execute-task", async (req, res) => {
+  const { task_group_id, task_id } = req.body;
+  const device_id = req.params.deviceId; // RMS device UUID (not serial)
+
+  if (!task_group_id || !task_id) {
+    return res.status(400).json({ error: "task_group_id and task_id required" });
+  }
+
+  const payload = {
+    device_id: [device_id],
+    tasks: [{ task_id: task_id, variables: [] }],
+  };
+
+  try {
+    const r = await fetch(
       `${RMS_BASE}/devices/tasks/groups/${task_group_id}`,
       {
         method: "POST",
         headers: rmsHeaders(),
-        body: JSON.stringify({
-          tasks: [{ name: "execute", data: [{ serial: device_serial }] }],
-        }),
+        body: JSON.stringify(payload),
       }
     );
-    const execData = await execR.json();
-    res.status(execR.status).json(execData);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
-// ── Networks ──────────────────────────────────────────────────────────────────
-app.get("/api/networks", async (req, res) => {
-  try {
-    const r = await fetch(`${RMS_BASE}/networks`, { headers: rmsHeaders() });
     const data = await r.json();
     res.status(r.status).json(data);
   } catch (e) {
@@ -176,7 +207,7 @@ app.post("/api/devices/:id/tags", async (req, res) => {
   }
 });
 
-// ── Files (for UUID downloader) ───────────────────────────────────────────────
+// ── Files (UUID Downloader reads from here) ───────────────────────────────────
 app.get("/api/files", async (req, res) => {
   try {
     const r = await fetch(`${RMS_BASE}/files`, { headers: rmsHeaders() });
@@ -192,7 +223,6 @@ app.get("/api/files/:id/download", async (req, res) => {
     const r = await fetch(`${RMS_BASE}/files/${req.params.id}/download`, {
       headers: rmsHeaders(),
     });
-    // Return raw text — the UUID file is plain text
     const text = await r.text();
     res.status(r.status).send(text);
   } catch (e) {
@@ -206,4 +236,6 @@ app.get("*", (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`VivoPoint Config Tool running on :${PORT}`));
+app.listen(PORT, () =>
+  console.log(`VivoPoint Config Tool running on :${PORT}`)
+);
