@@ -653,7 +653,8 @@ async function api(path, opts) {
   const text = await r.text();
   let json;
   try { json = JSON.parse(text); } catch(e) { throw new Error('Non-JSON: ' + text.slice(0,120)); }
-  if (!r.ok) throw new Error(json.error || 'HTTP ' + r.status);
+  // Health endpoint always resolves — never throw on it
+  if (!r.ok && path !== '/health' && path !== '/ping') throw new Error(json.error || 'HTTP ' + r.status);
   return json;
 }
 
@@ -661,23 +662,24 @@ async function api(path, opts) {
 // Init
 // ─────────────────────────────────────────────────────────────────────────────
 async function init() {
+  const dot = document.getElementById('conn-dot');
+  const lbl = document.getElementById('conn-label');
   try {
     const d = await api('/health');
-    const dot = document.getElementById('conn-dot');
-    const lbl = document.getElementById('conn-label');
     if (d.ok && d.token_set) {
       dot.classList.add('live');
       lbl.textContent = 'RMS connected';
-      log('RMS API token verified', 'ok');
+      log('Backend ready', 'ok');
       discoverProfiles();
     } else {
-      dot.classList.add('err'); lbl.textContent = 'Token missing';
-      log('Set RMS_API_TOKEN in Railway environment variables', 'err');
-      document.getElementById('disc-status').innerHTML = '<span style="color:var(--red)">✗ Token not set</span>';
+      dot.classList.add('err');
+      lbl.textContent = 'Token missing';
+      log('RMS_API_TOKEN not set in Railway environment variables', 'err');
+      document.getElementById('disc-status').innerHTML = '<span style="color:var(--red)">&#x2715; Token not set — add RMS_API_TOKEN in Railway Variables</span>';
     }
   } catch(e) {
-    document.getElementById('conn-dot').classList.add('err');
-    document.getElementById('conn-label').textContent = 'Offline';
+    dot.classList.add('err');
+    lbl.textContent = 'Offline';
     log('Backend unreachable: ' + e.message, 'err');
   }
 }
