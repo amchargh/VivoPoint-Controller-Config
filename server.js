@@ -162,14 +162,37 @@ app.post("/api/devices/:deviceId/execute-task", auth.requireAuth, async (req, re
   } catch (e) { res.status(e.status||500).json({ error: e.message }); }
 });
 
+// Cache company_id — fetched once from RMS /profile, reused for all tag creates
+let cachedCompanyId = null;
+async function getCompanyId() {
+  if (cachedCompanyId) return cachedCompanyId;
+  try {
+    const data = await rmsGet("/profile");
+    // RMS returns company_id at various nesting levels depending on account type
+    const id = data.data?.company_id || data.company_id || data.data?.id || null;
+    if (id) { cachedCompanyId = id; return id; }
+    // Fallback: try /companies
+    const companies = await rmsGet("/companies?limit=1");
+    const cid = (companies.data||[])[0]?.id || null;
+    if (cid) { cachedCompanyId = cid; }
+    return cachedCompanyId;
+  } catch(e) {
+    console.error("Failed to fetch company_id:", e.message);
+    return null;
+  }
+}
+
 app.get("/api/tags", auth.requireAuth, async (req, res) => {
   try { res.json(await rmsGet("/tags")); }
   catch (e) { res.status(e.status||500).json({ error: e.message }); }
 });
 
 app.post("/api/tags", auth.requireAuth, async (req, res) => {
-  try { res.json(await rmsPost("/tags", req.body)); }
-  catch (e) { res.status(e.status||500).json({ error: e.message }); }
+  try {
+    const company_id = await getCompanyId();
+    const body = company_id ? { ...req.body, company_id } : req.body;
+    res.json(await rmsPost("/tags", body));
+  } catch (e) { res.status(e.status||500).json({ error: e.message }); }
 });
 
 app.post("/api/devices/:id/tags", auth.requireAuth, async (req, res) => {
