@@ -162,24 +162,35 @@ app.post("/api/devices/:deviceId/execute-task", auth.requireAuth, async (req, re
   } catch (e) { res.status(e.status||500).json({ error: e.message }); }
 });
 
-// Cache company_id — fetched once from RMS /profile, reused for all tag creates
+// Cache company_id — fetched from GET /user then fallback to first device
 let cachedCompanyId = null;
 async function getCompanyId() {
   if (cachedCompanyId) return cachedCompanyId;
   try {
-    const data = await rmsGet("/profile");
-    // RMS returns company_id at various nesting levels depending on account type
-    const id = data.data?.company_id || data.company_id || data.data?.id || null;
+    const userData = await rmsGet("/user");
+    const id = userData?.data?.company_id;
     if (id) { cachedCompanyId = id; return id; }
-    // Fallback: try /companies
-    const companies = await rmsGet("/companies?limit=1");
-    const cid = (companies.data||[])[0]?.id || null;
-    if (cid) { cachedCompanyId = cid; }
-    return cachedCompanyId;
-  } catch(e) {
-    console.error("Failed to fetch company_id:", e.message);
-    return null;
+  } catch(e) { console.error("GET /user failed:", e.message); }
+  try {
+    const devData = await rmsGet("/devices?limit=1");
+    const id = (devData?.data || [])[0]?.company_id;
+    if (id) { cachedCompanyId = id; return id; }
+  } catch(e) { console.error("GET /devices fallback for company_id failed:", e.message); }
+  return null;
+}
+
+// Find existing tag by name (case-insensitive) — mirrors Python find_existing_tag()
+async function findExistingTag(name) {
+  for (let page = 1; page <= 10; page++) {
+    try {
+      const data = await rmsGet(`/tags?page=${page}&limit=100`);
+      const tags = data.data || [];
+      const match = tags.find(t => (t.name||'').toLowerCase() === name.toLowerCase());
+      if (match) return match.id;
+      if (tags.length < 100) break;
+    } catch { break; }
   }
+  return null;
 }
 
 app.get("/api/tags", auth.requireAuth, async (req, res) => {
@@ -187,12 +198,55 @@ app.get("/api/tags", auth.requireAuth, async (req, res) => {
   catch (e) { res.status(e.status||500).json({ error: e.message }); }
 });
 
-app.post("/api/tags", auth.requireAuth, async (req, res) => {
+// Create or reuse a tag by name, then assign to device via PUT /devices/tags/assign
+// Mirrors Python create_and_assign_property_tag() exactly
+app.post("/api/tags/assign", auth.requireAuth, async (req, res) => {
+  const { name, device_id } = req.body;
+  if (!name || !device_id) return res.status(400).json({ error: "name and device_id required" });
   try {
-    const company_id = await getCompanyId();
-    const body = company_id ? { ...req.body, company_id } : req.body;
-    res.json(await rmsPost("/tags", body));
-  } catch (e) { res.status(e.status||500).json({ error: e.message }); }
+    // Step 1: Check if tag already exists
+    let tagId = await findExistingTag(name);
+
+    if (tagId) {
+      console.log(`Reusing existing tag "${name}" (id: ${tagId})`);
+    } else {
+      // Step 2: Get company_id and create new tag
+      const company_id = await getCompanyId();
+      if (!company_id) throw new Error("Could not determine company_id from RMS. Check /user endpoint.");
+      console.log(`Creating tag "${name}" with company_id: ${company_id}`);
+      await rmsPost("/tags", {
+        name,
+        company_id,
+        description: `Property tag for ${name}`,
+        color: "#2196F3",
+      });
+      // Step 3: Find the newly created tag ID by name
+      await new Promise(r => setTimeout(r, 1000)); // brief wait for RMS to index
+      tagId = await findExistingTag(name);
+      if (!tagId) throw new Error(`Tag created but ID not found — try again`);
+      console.log(`Created tag "${name}" (id: ${tagId})`);
+    }
+
+    // Step 4: Assign tag to device via PUT /devices/tags/assign
+    const assignRes = await fetch(`${RMS_BASE}/devices/tags/assign`, {
+      method: "PUT",
+      headers: rmsHeaders(),
+      body: JSON.stringify({ data: [{ device_id, tag_id: [tagId] }] }),
+    });
+    const assignText = await assignRes.text();
+    if (!assignRes.ok) throw new Error(`Assign failed: ${assignRes.status} ${assignText.slice(0,200)}`);
+
+    res.json({ ok: true, tag_id: tagId, reused: !!tagId });
+  } catch (e) {
+    console.error("POST /api/tags/assign:", e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Keep old route for compatibility but redirect to new logic
+app.post("/api/tags", auth.requireAuth, async (req, res) => {
+  try { res.json(await rmsPost("/tags", req.body)); }
+  catch (e) { res.status(e.status||500).json({ error: e.message }); }
 });
 
 app.post("/api/devices/:id/tags", auth.requireAuth, async (req, res) => {

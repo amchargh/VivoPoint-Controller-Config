@@ -1568,12 +1568,14 @@ async function assignTag(inputId) {
   const name = document.getElementById(inputId || 'prop-name').value.trim();
   if (!name)             { log('Enter a property name first', 'warn'); return; }
   if (!S.selectedDevice) { log('No device selected', 'warn'); return; }
-  log('Creating tag: "' + name + '"...', 'info');
+  log('Assigning tag "' + name + '" to ' + S.selectedDevice.name + '...', 'info');
   try {
-    const tagRes = await api('/tags', { method: 'POST', body: { name } });
-    const tagId  = (tagRes.data || tagRes).id;
-    await api('/devices/' + S.selectedDevice.id + '/tags', { method: 'POST', body: { tag_ids: [tagId] } });
-    log('Tag "' + name + '" assigned to ' + S.selectedDevice.name, 'ok');
+    const res = await api('/tags/assign', {
+      method: 'POST',
+      body: { name, device_id: S.selectedDevice.id }
+    });
+    const action = res.reused ? 'reused existing tag' : 'created new tag';
+    log('✓ Tag "' + name + '" assigned to ' + S.selectedDevice.name + ' (' + action + ')', 'ok');
     document.getElementById(inputId || 'prop-name').value = '';
   } catch(e) { log('Tag failed: ' + e.message, 'err'); }
 }
