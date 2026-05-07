@@ -200,8 +200,13 @@ app.get("*", (req, res) => res.sendFile(path.join(__dirname, "public", "index.ht
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`VivoPoint Config Tool running on port ${PORT}`);
-  console.log(`RMS_API_TOKEN: ${token() ? "SET (" + token().slice(0,12) + "...)" : "NOT SET"}`);
-  console.log(`Node: ${process.version}`);
+auth.initDb().then(() => {
+  app.listen(PORT, () => {
+    console.log(`VivoPoint Config Tool running on port ${PORT}`);
+    console.log(`RMS_API_TOKEN: ${token() ? "SET (" + token().slice(0,12) + "...)" : "NOT SET"}`);
+    console.log(`Node: ${process.version}`);
+  });
+}).catch(e => {
+  console.error("Failed to init database:", e);
+  process.exit(1);
 });
