@@ -288,6 +288,7 @@ body{font-family:var(--font);background:var(--surface);color:var(--text);font-si
               <div class="action-tab active" onclick="showActionTab('tagged-url',this)">🔗 URL Builder</div>
               <div class="action-tab" onclick="showActionTab('tagged-uuid',this)">🆔 Device UUID</div>
               <div class="action-tab" onclick="showActionTab('tagged-details',this)">📋 Device Details</div>
+              <div class="action-tab" onclick="showActionTab('tagged-tag',this)">🏷️ Property Tag</div>
             </div>
             <div class="action-body">
 
@@ -362,6 +363,18 @@ body{font-family:var(--font);background:var(--surface);color:var(--text);font-si
                 <div class="info-grid" id="tagged-details-body">
                   <span style="color:var(--text-3);grid-column:1/-1">Loading device details...</span>
                 </div>
+              </div>
+
+              <!-- Property Tag tab (tagged mode) -->
+              <div class="action-tab-panel" id="tagged-tag">
+                <div class="inline" style="margin-bottom:8px">
+                  <div class="field">
+                    <label>Property name</label>
+                    <input type="text" id="tagged-prop-name" placeholder="e.g. Smith Pool, Apartment Complex A">
+                  </div>
+                  <button class="btn btn-primary" onclick="assignTag('tagged-prop-name')">🏷️ Create &amp; assign tag</button>
+                </div>
+                <div style="font-size:11px;color:var(--text-3)">Creates an RMS tag and assigns it to this device</div>
               </div>
 
             </div>
@@ -451,7 +464,7 @@ body{font-family:var(--font);background:var(--surface);color:var(--text);font-si
                     <label>Property name</label>
                     <input type="text" id="prop-name" placeholder="e.g. Smith Pool, Apartment Complex A">
                   </div>
-                  <button class="btn btn-primary" onclick="assignTag()">🏷️ Create &amp; assign tag</button>
+                  <button class="btn btn-primary" onclick="assignTag('prop-name')">🏷️ Create &amp; assign tag</button>
                 </div>
                 <div style="font-size:11px;color:var(--text-3)">Creates an RMS tag and assigns it to this device</div>
               </div>
@@ -1551,8 +1564,8 @@ async function runConfiguration() {
 // ─────────────────────────────────────────────────────────────────────────────
 // Property tag assignment
 // ─────────────────────────────────────────────────────────────────────────────
-async function assignTag() {
-  const name = document.getElementById('prop-name').value.trim();
+async function assignTag(inputId) {
+  const name = document.getElementById(inputId || 'prop-name').value.trim();
   if (!name)             { log('Enter a property name first', 'warn'); return; }
   if (!S.selectedDevice) { log('No device selected', 'warn'); return; }
   log('Creating tag: "' + name + '"...', 'info');
@@ -1561,6 +1574,7 @@ async function assignTag() {
     const tagId  = (tagRes.data || tagRes).id;
     await api('/devices/' + S.selectedDevice.id + '/tags', { method: 'POST', body: { tag_ids: [tagId] } });
     log('Tag "' + name + '" assigned to ' + S.selectedDevice.name, 'ok');
+    document.getElementById(inputId || 'prop-name').value = '';
   } catch(e) { log('Tag failed: ' + e.message, 'err'); }
 }
 
