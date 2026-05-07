@@ -1246,7 +1246,6 @@ async function runUuidDownloader() {
       uuidStatus('UUID file not found — check RMS Files manually', 'warn');
       log('[UUID] Not found after retries. Expected: ' + bwSerial + '_*', 'warn');
     }
-    }
 
   } catch(e) {
     uuidStatus('Error: ' + e.message, 'err');
