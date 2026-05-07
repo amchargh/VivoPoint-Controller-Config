@@ -565,11 +565,10 @@ function inferCtrlFromTag(tagName) {
 // ─────────────────────────────────────────────────────────────────────────────
 const S = {
   devices: [],
-  taskGroups: [],
+  taskGroups: [],           // raw from RMS
   selectedDevice: null,
   configuredSerials: new Set(),
-  deviceCtrlTag: {},
-  showAllDevices: false,
+  deviceCtrlTag: {},        // serial -> tag name string (from RMS tag)
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -661,33 +660,23 @@ async function api(path, opts) {
 // Init
 // ─────────────────────────────────────────────────────────────────────────────
 async function init() {
-  const dot = document.getElementById('conn-dot');
-  const lbl = document.getElementById('conn-label');
   try {
-    // Fast check — just confirms server is up and token is set
     const d = await api('/health');
+    const dot = document.getElementById('conn-dot');
+    const lbl = document.getElementById('conn-label');
     if (d.ok && d.token_set) {
       dot.classList.add('live');
       lbl.textContent = 'RMS connected';
-      log('Backend ready — token set', 'ok');
-      // Fire discover immediately — don't wait for ping
+      log('RMS API token verified', 'ok');
       discoverProfiles();
-      // Verify RMS reachability in background (non-blocking)
-      api('/ping').then(p => {
-        if (!p.ok) {
-          lbl.textContent = 'RMS unreachable';
-          dot.classList.remove('live'); dot.classList.add('err');
-          log('RMS ping failed: ' + (p.error||'unknown'), 'err');
-        }
-      }).catch(() => {});
     } else {
       dot.classList.add('err'); lbl.textContent = 'Token missing';
       log('Set RMS_API_TOKEN in Railway environment variables', 'err');
       document.getElementById('disc-status').innerHTML = '<span style="color:var(--red)">✗ Token not set</span>';
     }
   } catch(e) {
-    dot.classList.add('err');
-    lbl.textContent = 'Offline';
+    document.getElementById('conn-dot').classList.add('err');
+    document.getElementById('conn-label').textContent = 'Offline';
     log('Backend unreachable: ' + e.message, 'err');
   }
 }
@@ -822,7 +811,6 @@ async function listDevices() {
   try {
     const data = await api('/devices');
     S.devices = data.data || [];
-    S.showAllDevices = false; // reset to top-10 view on fresh load
 
     // Pre-mark configured status from tags that come with the list
     S.devices.forEach(d => {
@@ -847,27 +835,19 @@ async function listDevices() {
 
 function filterDevices() {
   const q = document.getElementById('device-search').value.toLowerCase();
-  const filtered = q
+  renderDeviceList(q
     ? S.devices.filter(d => (d.name||'').toLowerCase().includes(q) || (d.serial||'').includes(q))
-    : S.devices;
-  // When searching, show all results; when browsing, respect the show-all toggle
-  const showAll = q || S.showAllDevices;
-  renderDeviceList(filtered, showAll);
+    : S.devices);
 }
 
-function renderDeviceList(list, showAll) {
+function renderDeviceList(list) {
   const container = document.getElementById('device-list');
   if (!list.length) {
     container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:8px 0">No devices found.</div>';
     return;
   }
-
-  const LIMIT = 10;
-  const visible = showAll ? list : list.slice(0, LIMIT);
-  const hiddenCount = list.length - visible.length;
-
   container.innerHTML = '';
-  visible.forEach(d => {
+  list.slice(0, 100).forEach(d => {
     const tagged = S.configuredSerials.has(d.serial);
     const isSelected = S.selectedDevice && S.selectedDevice.id === d.id;
     const online = d.status === 1;
@@ -899,22 +879,11 @@ function renderDeviceList(list, showAll) {
     row.appendChild(icon);
     row.appendChild(info);
     row.appendChild(right);
+
+    // ALL devices are clickable — tagged ones open in URL/UUID mode
     row.addEventListener('click', () => selectDevice(d.id));
     container.appendChild(row);
   });
-
-  // Show all / show less toggle row
-  if (hiddenCount > 0) {
-    const toggle = document.createElement('div');
-    toggle.style.cssText = 'text-align:center;padding:8px 0';
-    toggle.innerHTML = '<button class="btn" style="width:100%;justify-content:center;color:var(--blue);border-color:var(--blue)" onclick="S.showAllDevices=true;filterDevices()">Show all ' + list.length + ' devices (' + hiddenCount + ' more)</button>';
-    container.appendChild(toggle);
-  } else if (showAll && list.length > LIMIT && !document.getElementById('device-search').value) {
-    const toggle = document.createElement('div');
-    toggle.style.cssText = 'text-align:center;padding:8px 0';
-    toggle.innerHTML = '<button class="btn" style="width:100%;justify-content:center" onclick="S.showAllDevices=false;filterDevices()">Show less</button>';
-    container.appendChild(toggle);
-  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1217,13 +1186,14 @@ async function runUuidDownloader() {
     await getFirstTaskAndExecute(d.id, uuidGroup.id, '[UUID] ');
     log('[UUID] Task group executed successfully', 'ok');
 
-    // Step 3: Poll RMS Files — match device_id_{BW#}_* (most recent file wins)
-    // The UUID Downloader task writes device_id_{BW#}_{serial}_{date}.txt
-    // Match on BW# prefix only — the task always writes the correct device's file for this run
+    // Step 3: Poll RMS Files for the correct file — strict serial match only
+    // File naming: device_id_{BW#}_{serial}_{date}.txt
+    // NEVER fall back to a loose BW# match — that picks up other devices' old files
     const bwNum  = bow.replace('BW', '');
     const serial = d.serial || '';
-    const bwPrefix = 'device_id_' + bwNum + '_';
-    log('[UUID] Looking for most recent file matching: ' + bwPrefix + '*', 'info');
+    // Strict prefix: must contain both BW number AND this device's serial
+    const strictPrefix = 'device_id_' + bwNum + '_' + serial;
+    log('[UUID] Looking for files matching: ' + strictPrefix + '_*', 'info');
 
     let found = null;
     for (let retry = 0; retry < 6; retry++) {
@@ -1233,53 +1203,57 @@ async function runUuidDownloader() {
       const filesRes = await api('/files');
       const files = filesRes.data || [];
 
-      // Log all device_id files for visibility
+      // Always log what device_id files exist so we can diagnose mismatches
       const allDevIdFiles = files.filter(f => (f.name||'').startsWith('device_id_'));
-      if (allDevIdFiles.length) {
-        log('[UUID] device_id files in RMS: ' + allDevIdFiles.map(f => f.name).join(' | '), 'info');
-      }
+      log('[UUID] All device_id files in RMS (' + allDevIdFiles.length + '): ' +
+        allDevIdFiles.map(f => f.name).join(' | '), 'info');
 
-      // Match device_id_{BW#}_* — most recently created file wins
-      const matches = files.filter(f => (f.name||'').startsWith(bwPrefix));
+      // Strict match: device_id_{BW#}_{serial}_{anything}
+      const matches = files.filter(f => (f.name||'').startsWith(strictPrefix));
 
       if (matches.length) {
+        // Most recent first
         matches.sort((a,b) => (b.created_at||'').localeCompare(a.created_at||''));
         const candidate = matches[0];
-        log('[UUID] Using most recent ' + bwPrefix + '* file: ' + candidate.name, 'ok');
+        log('[UUID] ✓ Matched file for serial ' + serial + ': ' + candidate.name, 'ok');
         uuidStatus('Downloading: ' + candidate.name);
 
         // Step 4: Download and extract UUID
         const dlRes = await fetch('/api/files/' + candidate.id + '/download');
         let text = await dlRes.text();
         text = text.replace(/﻿/g,'').replace(/ /g,'');
-        const lines2 = text.replace(/
-/g,'\n').replace(//g,'\n').split('\n');
+        const lines = text.replace(/
+/g,'
+').replace(//g,'
+').split('
+');
         const uuidRe = /([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i;
         let extractedUuid = null;
-        for (const line of lines2) {
+        for (const line of lines) {
           const m = line.trim().match(uuidRe);
           if (m) { extractedUuid = m[1]; break; }
         }
 
         if (extractedUuid) {
           uuidEl.value = extractedUuid;
-          uuidStatus('UUID retrieved for ' + bow + ' (' + candidate.name + ')', 'ok');
-          log('[UUID] Extracted UUID: ' + extractedUuid + ' from ' + candidate.name, 'ok');
+          uuidStatus('✓ UUID retrieved for ' + bow, 'ok');
+          log('[UUID] Extracted UUID: ' + extractedUuid, 'ok');
           found = extractedUuid;
           break;
         } else {
-          log('[UUID] File downloaded but no UUID found. Content: ' + text.slice(0,120), 'warn');
+          log('[UUID] File downloaded but no UUID found in content: ' + text.slice(0,120), 'warn');
         }
       } else {
-        log('[UUID] Retry ' + (retry+1) + '/6 -- no file yet matching ' + bwPrefix + '*', 'warn');
+        log('[UUID] Retry ' + (retry+1) + '/6 — no file yet matching ' + strictPrefix + '_*', 'warn');
       }
     }
 
     if (!found) {
-      uuidEl.value = 'Check RMS Files: ' + bwPrefix + '*';
-      uuidStatus('No ' + bwPrefix + '* file found after 6 retries', 'warn');
-      log('[UUID] Expected ' + bwPrefix + '* -- not found after retries. Check RMS Files manually.', 'warn');
+      uuidEl.value = 'Check RMS Files: ' + strictPrefix + '_*';
+      uuidStatus('File not found for serial ' + serial + ' after 6 retries', 'warn');
+      log('[UUID] Expected file pattern: ' + strictPrefix + '_* — not found after retries. Check RMS Files.', 'warn');
     }
+
   } catch(e) {
     uuidStatus('Error: ' + e.message, 'err');
     log('[UUID] Failed: ' + e.message, 'err');
