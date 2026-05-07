@@ -8,154 +8,175 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --navy: #0b1929; --navy-mid: #0f2235; --blue: #2e7dda; --blue-bright: #3b9eff;
-  --teal: #1db88a; --teal-dim: #0d6e52; --amber: #f5a623; --red: #e85d4a;
-  --surface: #f4f6f9; --surface-2: #edf0f5;
-  --border: rgba(0,0,0,0.1); --border-light: rgba(0,0,0,0.06);
-  --text: #0d1f35; --text-2: #4a6278; --text-3: #8fa5bb;
-  --font: 'Sora', sans-serif; --mono: 'DM Mono', monospace;
-  --radius: 10px; --radius-sm: 6px;
-  --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+  --navy:#0b1929; --blue:#2e7dda; --blue-bright:#3b9eff;
+  --teal:#1db88a; --teal-dim:#0d6e52; --amber:#f5a623; --red:#e85d4a;
+  --surface:#f4f6f9; --surface-2:#edf0f5;
+  --border:rgba(0,0,0,0.1); --border-light:rgba(0,0,0,0.06);
+  --text:#0d1f35; --text-2:#4a6278; --text-3:#8fa5bb;
+  --font:'Sora',sans-serif; --mono:'DM Mono',monospace;
+  --radius:10px; --radius-sm:6px;
+  --shadow:0 1px 4px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.06);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
-body { font-family: var(--font); background: var(--surface); color: var(--text); font-size: 13px; line-height: 1.5; }
-.layout { display: grid; grid-template-columns: 220px 1fr; grid-template-rows: 52px 1fr; height: 100vh; }
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--surface);color:var(--text);font-size:13px;line-height:1.5}
+.layout{display:grid;grid-template-columns:220px 1fr;grid-template-rows:52px 1fr;height:100vh}
 
 /* Topbar */
-.topbar {
-  grid-column: 1/-1; background: var(--navy);
-  display: flex; align-items: center; padding: 0 20px; gap: 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.logo { font-size: 16px; font-weight: 600; color: #fff; letter-spacing: -0.3px; }
-.logo span { color: var(--blue-bright); }
-.topbar-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.12); }
-.topbar-title { font-size: 12px; color: rgba(255,255,255,0.55); font-weight: 300; }
-.topbar-right { margin-left: auto; }
-.conn-badge { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 20px; }
-.conn-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); transition: background 0.3s; }
-.conn-dot.live { background: var(--teal); box-shadow: 0 0 0 3px rgba(29,184,138,0.2); }
-.conn-dot.err  { background: var(--red); }
+.topbar{grid-column:1/-1;background:var(--navy);display:flex;align-items:center;padding:0 20px;gap:16px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.logo{font-size:16px;font-weight:600;color:#fff;letter-spacing:-0.3px}
+.logo span{color:var(--blue-bright)}
+.topbar-sep{width:1px;height:20px;background:rgba(255,255,255,0.12)}
+.topbar-title{font-size:12px;color:rgba(255,255,255,0.55);font-weight:300}
+.topbar-right{margin-left:auto}
+.conn-badge{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.05);padding:4px 10px;border-radius:20px}
+.conn-dot{width:6px;height:6px;border-radius:50%;background:var(--text-3);transition:background 0.3s}
+.conn-dot.live{background:var(--teal);box-shadow:0 0 0 3px rgba(29,184,138,0.2)}
+.conn-dot.err{background:var(--red)}
 
 /* Sidebar */
-.sidebar { background: #fff; border-right: 1px solid var(--border-light); padding: 16px 0; overflow-y: auto; }
-.sidebar-label { font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: var(--text-3); padding: 8px 18px 4px; text-transform: uppercase; }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 18px; cursor: pointer; font-size: 12px; color: var(--text-2); transition: background 0.12s, color 0.12s; border-left: 3px solid transparent; }
-.nav-item:hover { background: var(--surface); color: var(--text); }
-.nav-item.active { background: #e8f2fd; color: var(--blue); border-left-color: var(--blue); font-weight: 500; }
+.sidebar{background:#fff;border-right:1px solid var(--border-light);padding:16px 0;overflow-y:auto}
+.sidebar-label{font-size:10px;font-weight:600;letter-spacing:0.8px;color:var(--text-3);padding:8px 18px 4px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;font-size:12px;color:var(--text-2);transition:background 0.12s,color 0.12s;border-left:3px solid transparent}
+.nav-item:hover{background:var(--surface);color:var(--text)}
+.nav-item.active{background:#e8f2fd;color:var(--blue);border-left-color:var(--blue);font-weight:500}
 
 /* Main */
-.main { overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.main{overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px}
 
 /* Cards */
-.card { background: #fff; border-radius: var(--radius); border: 1px solid var(--border-light); box-shadow: var(--shadow); overflow: hidden; }
-.card-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--border-light); background: #fafbfc; }
-.card-title { font-size: 12px; font-weight: 600; color: var(--text); }
-.card-body { padding: 16px 18px; }
+.card{background:#fff;border-radius:var(--radius);border:1px solid var(--border-light);box-shadow:var(--shadow);overflow:hidden}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border-light);background:#fafbfc}
+.card-title{font-size:12px;font-weight:600;color:var(--text)}
+.card-body{padding:16px 18px}
 
 /* Fields */
-.field { display: flex; flex-direction: column; gap: 5px; }
-.field label { font-size: 10px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; }
-.field input, .field select { height: 34px; padding: 0 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--text); font-size: 12px; font-family: var(--font); width: 100%; transition: border-color 0.15s, box-shadow 0.15s; }
-.field input:focus, .field select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(46,125,218,0.12); }
-.field input.mono { font-family: var(--mono); font-size: 11px; }
-.field input[readonly] { background: var(--surface); color: var(--text-2); cursor: default; }
-.field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%238fa5bb' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
-.field select:disabled { background: var(--surface); color: var(--text-3); }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px}
+.field input,.field select{height:34px;padding:0 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:#fff;color:var(--text);font-size:12px;font-family:var(--font);width:100%;transition:border-color 0.15s,box-shadow 0.15s}
+.field input:focus,.field select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(46,125,218,0.12)}
+.field input.mono{font-family:var(--mono);font-size:11px}
+.field input[readonly]{background:var(--surface);color:var(--text-2);cursor:default}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%238fa5bb' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.field select:disabled{background:var(--surface);color:var(--text-3)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 
 /* Buttons */
-.btn { height: 32px; padding: 0 14px; border-radius: var(--radius-sm); font-size: 12px; font-family: var(--font); font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: #fff; color: var(--text); display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; transition: background 0.12s; flex-shrink: 0; }
-.btn:hover:not(:disabled) { background: var(--surface); }
-.btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
-.btn-primary:hover:not(:disabled) { background: #2570c8; }
-.btn-success { background: var(--teal); color: #fff; border-color: var(--teal); }
-.btn-success:hover:not(:disabled) { background: var(--teal-dim); }
-.btn-lg { height: 40px; padding: 0 20px; font-size: 13px; border-radius: var(--radius); }
-.inline { display: flex; gap: 10px; align-items: flex-end; }
-.inline .field { flex: 1; }
+.btn{height:32px;padding:0 14px;border-radius:var(--radius-sm);font-size:12px;font-family:var(--font);font-weight:500;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text);display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:background 0.12s;flex-shrink:0}
+.btn:hover:not(:disabled){background:var(--surface)}
+.btn:disabled{opacity:0.45;cursor:not-allowed}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-primary:hover:not(:disabled){background:#2570c8}
+.btn-success{background:var(--teal);color:#fff;border-color:var(--teal)}
+.btn-success:hover:not(:disabled){background:var(--teal-dim)}
+.btn-amber{background:var(--amber);color:#fff;border-color:var(--amber)}
+.btn-amber:hover:not(:disabled){background:#d4891a}
+.btn-lg{height:40px;padding:0 20px;font-size:13px;border-radius:var(--radius)}
+.inline{display:flex;gap:10px;align-items:flex-end}
+.inline .field{flex:1}
 
 /* Pills */
-.pill { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
-.pill-blue   { background: #ddeeff; color: #1a5a9a; }
-.pill-green  { background: #d6f5e8; color: #0d6e52; }
-.pill-orange { background: #fff3db; color: #a06b00; }
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+.pill-blue{background:#ddeeff;color:#1a5a9a}
+.pill-green{background:#d6f5e8;color:#0d6e52}
+.pill-orange{background:#fff3db;color:#a06b00}
+.pill-amber{background:#fff3db;color:#7a4f00}
+.pill-red{background:#fde8e5;color:#a02a1a}
+.pill-gray{background:var(--surface-2);color:var(--text-2)}
 
 /* Status bar */
-.status-bar { display: flex; align-items: center; gap: 12px; padding: 10px 18px; border-top: 1px solid var(--border-light); background: #fafbfc; }
-.status-label { font-size: 11px; color: var(--text-2); }
-.status-val { font-size: 11px; font-weight: 500; }
-.status-val.ok   { color: var(--teal); }
-.status-val.warn { color: var(--amber); }
-.status-val.err  { color: var(--red); }
-.status-val.info { color: var(--blue); }
-.progress-rail { flex: 1; height: 3px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
-.progress-fill { height: 100%; background: var(--blue); border-radius: 2px; width: 0; }
-.progress-fill.anim { animation: rail 1.4s ease-in-out infinite; }
-@keyframes rail { 0%{width:0;margin-left:0} 50%{width:55%;margin-left:22%} 100%{width:0;margin-left:100%} }
+.status-bar{display:flex;align-items:center;gap:12px;padding:10px 18px;border-top:1px solid var(--border-light);background:#fafbfc}
+.status-label{font-size:11px;color:var(--text-2)}
+.status-val{font-size:11px;font-weight:500}
+.status-val.ok{color:var(--teal)}
+.status-val.warn{color:var(--amber)}
+.status-val.err{color:var(--red)}
+.status-val.info{color:var(--blue)}
+.progress-rail{flex:1;height:3px;background:var(--surface-2);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--blue);border-radius:2px;width:0}
+.progress-fill.anim{animation:rail 1.4s ease-in-out infinite}
+@keyframes rail{0%{width:0;margin-left:0}50%{width:55%;margin-left:22%}100%{width:0;margin-left:100%}}
 
 /* Log */
-.log { background: var(--navy); border-radius: var(--radius); padding: 12px 14px; font-family: var(--mono); font-size: 11px; color: #7faac8; line-height: 1.9; max-height: 160px; overflow-y: auto; }
-.log .ok   { color: #4ecda4; }
-.log .info { color: var(--blue-bright); }
-.log .warn { color: var(--amber); }
-.log .err  { color: #f09090; }
+.log{background:var(--navy);border-radius:var(--radius);padding:12px 14px;font-family:var(--mono);font-size:11px;color:#7faac8;line-height:1.9;max-height:160px;overflow-y:auto}
+.log .ok{color:#4ecda4}
+.log .info{color:var(--blue-bright)}
+.log .warn{color:var(--amber)}
+.log .err{color:#f09090}
 
-/* Device list — critical: no overflow:hidden on parent, pointer-events always on */
-.device-list { display: flex; flex-direction: column; gap: 6px; }
-.device-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border-light); border-radius: var(--radius-sm); cursor: pointer; transition: border-color 0.12s, background 0.12s; position: relative; }
-.device-row:hover:not(.locked) { border-color: var(--blue); background: #f0f7ff; }
-.device-row.selected { border-color: var(--blue); background: #e8f2fd; }
-.device-row.locked { cursor: not-allowed; background: #fffbf3; border-color: #f5dfa0; opacity: 0.75; }
-.d-icon { width: 34px; height: 34px; border-radius: var(--radius-sm); background: var(--navy); display: flex; align-items: center; justify-content: center; color: var(--blue-bright); font-size: 15px; flex-shrink: 0; }
-.d-name { font-size: 12px; font-weight: 500; color: var(--text); }
-.d-sub  { font-size: 11px; color: var(--text-2); margin-top: 1px; }
-.d-serial { font-size: 10px; color: var(--text-3); font-family: var(--mono); margin-top: 1px; }
-.d-right { margin-left: auto; flex-shrink: 0; }
+/* Device rows */
+.device-list{display:flex;flex-direction:column;gap:6px}
+.device-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border-light);border-radius:var(--radius-sm);cursor:pointer;transition:border-color 0.12s,background 0.12s}
+.device-row:hover{border-color:var(--blue);background:#f0f7ff}
+.device-row.selected{border-color:var(--blue);background:#e8f2fd}
+.device-row.already-tagged{background:#fffbf3;border-color:#f5dfa0}
+.device-row.already-tagged:hover{border-color:var(--amber);background:#fff8eb}
+.d-icon{width:34px;height:34px;border-radius:var(--radius-sm);background:var(--navy);display:flex;align-items:center;justify-content:center;color:var(--blue-bright);font-size:15px;flex-shrink:0}
+.d-icon.tagged{background:#7a4f00}
+.d-name{font-size:12px;font-weight:500;color:var(--text)}
+.d-sub{font-size:11px;color:var(--text-2);margin-top:1px}
+.d-serial{font-size:10px;color:var(--text-3);font-family:var(--mono);margin-top:1px}
+.d-right{margin-left:auto;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+
+/* Action panel — shown when a device is selected */
+.action-panel{border-radius:var(--radius);border:1px solid var(--border-light);overflow:hidden;box-shadow:var(--shadow);background:#fff}
+.action-panel-header{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border-light)}
+.action-device-name{font-size:14px;font-weight:600;color:var(--text)}
+.action-device-meta{font-size:11px;color:var(--text-2);margin-top:2px}
+.action-tabs{display:flex;border-bottom:1px solid var(--border-light)}
+.action-tab{padding:9px 18px;font-size:12px;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:color 0.12s,border-color 0.12s}
+.action-tab:hover{color:var(--text)}
+.action-tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
+.action-body{padding:18px}
+.action-tab-panel{display:none}
+.action-tab-panel.active{display:block}
 
 /* Info grid */
-.info-grid { display: grid; grid-template-columns: 130px 1fr; gap: 6px 14px; font-size: 12px; }
-.info-k { color: var(--text-2); }
-.info-v { color: var(--text); font-weight: 500; }
-.info-v.mono { font-family: var(--mono); font-size: 11px; }
+.info-grid{display:grid;grid-template-columns:140px 1fr;gap:6px 14px;font-size:12px}
+.info-k{color:var(--text-2)}
+.info-v{color:var(--text);font-weight:500}
+.info-v.mono{font-family:var(--mono);font-size:11px}
 
 /* URL box */
-.url-box { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; font-family: var(--mono); font-size: 12px; }
-.url-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.url-box{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-family:var(--mono);font-size:12px}
+.url-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* Banners */
-.confirm-banner { background: #d6f5e8; border: 1px solid #a8e8cc; border-radius: var(--radius); padding: 14px 18px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
-.confirm-icon { font-size: 22px; color: var(--teal); flex-shrink: 0; }
-.confirm-title { font-size: 13px; font-weight: 600; color: #085030; }
-.confirm-sub { font-size: 11px; color: #0d6e52; margin-top: 3px; line-height: 1.6; }
-.warn-banner { background: #fff8eb; border: 1px solid #f5dfa0; border-radius: var(--radius-sm); padding: 9px 12px; font-size: 11px; color: #7a5200; display: flex; align-items: center; gap: 8px; }
+.banner{border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+.banner-green{background:#d6f5e8;border:1px solid #a8e8cc;color:#085030}
+.banner-amber{background:#fff8eb;border:1px solid #f5dfa0;color:#7a5200}
+.banner-blue{background:#e8f2fd;border:1px solid #b5d4f4;color:#1a4a7a}
+.banner-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.banner-title{font-weight:600;margin-bottom:3px}
+.banner-sub{font-size:11px;opacity:0.85;line-height:1.6}
 
 /* Check list */
-.check-list { display: flex; flex-direction: column; }
-.check-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border-light); font-size: 12px; }
-.check-row:last-child { border-bottom: none; }
-.check-k { color: var(--text-2); }
+.check-list{display:flex;flex-direction:column}
+.check-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-light);font-size:12px}
+.check-row:last-child{border-bottom:none}
+.check-k{color:var(--text-2)}
 
 /* Search */
-.search-wrap { position: relative; }
-.search-wrap input { padding-left: 32px; }
-.search-ico { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--text-3); pointer-events: none; }
+.search-wrap{position:relative}
+.search-wrap input{padding-left:32px}
+.search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-3);pointer-events:none}
 
 /* Spinner */
-.spin { display: inline-block; animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+.spin{display:inline-block;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-@media (max-width: 768px) {
-  .layout { grid-template-columns: 1fr; grid-template-rows: 52px auto 1fr; }
-  .sidebar { display: flex; overflow-x: auto; padding: 0; border-right: none; border-bottom: 1px solid var(--border-light); }
-  .sidebar-label { display: none; }
-  .nav-item { white-space: nowrap; border-left: none; border-bottom: 3px solid transparent; }
-  .nav-item.active { border-bottom-color: var(--blue); border-left-color: transparent; }
-  .grid-3 { grid-template-columns: 1fr 1fr; }
-  .grid-2 { grid-template-columns: 1fr; }
+/* Divider */
+.divider{height:1px;background:var(--border-light);margin:14px 0}
+
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr;grid-template-rows:52px auto 1fr}
+  .sidebar{display:flex;overflow-x:auto;padding:0;border-right:none;border-bottom:1px solid var(--border-light)}
+  .sidebar-label{display:none}
+  .nav-item{white-space:nowrap;border-left:none;border-bottom:3px solid transparent}
+  .nav-item.active{border-bottom-color:var(--blue);border-left-color:transparent}
+  .grid-3{grid-template-columns:1fr 1fr}
+  .grid-2{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -175,9 +196,8 @@ body { font-family: var(--font); background: var(--surface); color: var(--text);
   </header>
 
   <nav class="sidebar">
-    <div class="sidebar-label">Configuration</div>
+    <div class="sidebar-label">Workflow</div>
     <div class="nav-item active" onclick="showPanel('config',this)">⚙️ &nbsp;Controller Setup</div>
-    <div class="nav-item" onclick="showPanel('urlbuilder',this)">🔗 &nbsp;URL Builder</div>
     <div class="nav-item" onclick="showPanel('devinfo',this)">📋 &nbsp;Device Info</div>
     <div class="sidebar-label" style="margin-top:8px">System</div>
     <div class="nav-item" onclick="showPanel('log',this)">📟 &nbsp;Activity Log</div>
@@ -185,18 +205,22 @@ body { font-family: var(--font); background: var(--surface); color: var(--text);
 
   <main class="main">
 
-    <!-- CONFIG -->
+    <!-- ════════════════════════════════════════════════════════════
+         CONTROLLER SETUP PANEL
+    ═════════════════════════════════════════════════════════════ -->
     <div id="panel-config">
 
+      <!-- Step 1: Profile Discovery -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Profile Discovery</span>
+          <span class="card-title">Step 1 — Profile Discovery</span>
           <div style="display:flex;align-items:center;gap:10px">
             <span id="disc-status" style="font-size:11px;color:var(--text-3)"><span class="spin">⏳</span> Loading...</span>
             <button class="btn" onclick="discoverProfiles()">🔄 Refresh</button>
           </div>
         </div>
         <div class="card-body">
+          <!-- Controller type selector — drives which task groups appear -->
           <div class="grid-2">
             <div class="field">
               <label>Controller type</label>
@@ -206,26 +230,25 @@ body { font-family: var(--font); background: var(--surface); color: var(--text);
             </div>
             <div class="field">
               <label>Profile (task group)</label>
-              <select id="profile-select" onchange="checkConfigBtn()" disabled>
-                <option value="">— select controller first —</option>
+              <select id="profile-select" onchange="onProfileChange()" disabled>
+                <option value="">— select controller type first —</option>
               </select>
             </div>
           </div>
+          <div id="profile-match-note" style="font-size:11px;color:var(--text-3);margin-top:8px"></div>
         </div>
       </div>
 
+      <!-- Step 2: Device Selection -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Device Selection</span>
+          <span class="card-title">Step 2 — Select Device</span>
           <button class="btn" id="btn-list" onclick="listDevices()">📋 List devices</button>
         </div>
         <div class="card-body">
-          <div class="inline" style="margin-bottom:12px">
-            <div class="field search-wrap">
-              <label>Search</label>
-              <span class="search-ico">🔎</span>
-              <input type="text" id="device-search" placeholder="Filter by name or serial..." oninput="filterDevices()">
-            </div>
+          <div class="search-wrap" style="margin-bottom:12px">
+            <span class="search-ico">🔎</span>
+            <input type="text" id="device-search" placeholder="Filter by name or serial..." oninput="filterDevices()" style="width:100%;height:34px;padding:0 10px 0 32px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-family:var(--font)">
           </div>
           <div class="device-list" id="device-list">
             <div style="font-size:12px;color:var(--text-3);padding:8px 0">Click "List devices" to load from RMS.</div>
@@ -233,124 +256,221 @@ body { font-family: var(--font); background: var(--surface); color: var(--text);
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header"><span class="card-title">Property Tag</span></div>
-        <div class="card-body">
-          <div class="inline">
-            <div class="field">
-              <label>Property name</label>
-              <input type="text" id="prop-name" placeholder="e.g. Smith Pool, Apartment Complex A">
+      <!-- Step 3: Action Panel — shown when a device is selected -->
+      <div id="action-panel-wrap" style="display:none">
+
+        <!-- TAGGED DEVICE — read-only info + URL/UUID tools -->
+        <div id="mode-tagged" style="display:none">
+          <div class="action-panel">
+            <div class="action-panel-header">
+              <div class="d-icon tagged">📡</div>
+              <div>
+                <div class="action-device-name" id="tagged-dev-name">—</div>
+                <div class="action-device-meta" id="tagged-dev-meta">—</div>
+              </div>
+              <div style="margin-left:auto">
+                <span class="pill pill-orange" id="tagged-ctrl-pill">🔒 Configured</span>
+              </div>
             </div>
-            <button class="btn btn-primary" onclick="assignTag()">🏷️ Create &amp; assign tag</button>
+            <div class="banner banner-amber" style="margin:0;border-radius:0;border-left:none;border-right:none">
+              <span class="banner-icon">🔒</span>
+              <div>
+                <div class="banner-title">Device already configured</div>
+                <div class="banner-sub">This device has a controller tag and cannot be reconfigured. You can still access its URL and UUID below.</div>
+              </div>
+            </div>
+            <div class="action-tabs">
+              <div class="action-tab active" onclick="showActionTab('tagged-url',this)">🔗 URL Builder</div>
+              <div class="action-tab" onclick="showActionTab('tagged-uuid',this)">🆔 Device UUID</div>
+              <div class="action-tab" onclick="showActionTab('tagged-details',this)">📋 Device Details</div>
+            </div>
+            <div class="action-body">
+
+              <!-- URL tab -->
+              <div class="action-tab-panel active" id="tagged-url">
+                <div class="grid-3" style="margin-bottom:14px">
+                  <div class="field">
+                    <label>Controller IP</label>
+                    <select id="tagged-ctrl-ip" onchange="buildTaggedUrl()">
+                      <option value="">— select —</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Port (auto)</label>
+                    <input type="text" id="tagged-port" readonly class="mono" placeholder="Auto">
+                  </div>
+                  <div class="field">
+                    <label>Controller type</label>
+                    <input type="text" id="tagged-ctrl-type-display" readonly>
+                  </div>
+                </div>
+                <div class="field" style="margin-bottom:10px">
+                  <label>Generated URL</label>
+                  <div class="url-box">
+                    <span>🔗</span>
+                    <span class="url-text" id="tagged-url-display" style="color:var(--text-3)">http://&lt;mobile-ip&gt;:&lt;port&gt;</span>
+                    <button class="btn" onclick="copyTaggedUrl()">📋 Copy</button>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:var(--text-3)">Mobile IP: <span id="tagged-mobile-ip" style="font-family:var(--mono)">—</span></div>
+              </div>
+
+              <!-- UUID tab -->
+              <div class="action-tab-panel" id="tagged-uuid">
+                <div class="banner banner-amber" style="margin-bottom:14px">
+                  <span class="banner-icon">⚠️</span>
+                  <div>Sensor labels changed from the default will not be translated.</div>
+                </div>
+                <div class="grid-2" style="margin-bottom:10px">
+                  <div class="field">
+                    <label>Body of water</label>
+                    <select id="tagged-bow" onchange="document.getElementById('tagged-uuid-val').value=''">
+                      <option value="">— select —</option>
+                      <option>BW1</option><option>BW2</option><option>BW3</option><option>BW4</option><option>BW5</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Device UUID</label>
+                    <div style="display:flex;gap:6px">
+                      <input type="text" id="tagged-uuid-val" readonly class="mono" placeholder="Click Get UUID →" style="flex:1">
+                      <button class="btn btn-primary" onclick="getTaggedUuid()">Get UUID</button>
+                      <button class="btn" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById('tagged-uuid-val').value)">📋</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Details tab -->
+              <div class="action-tab-panel" id="tagged-details">
+                <div class="info-grid" id="tagged-details-body">
+                  <span style="color:var(--text-3);grid-column:1/-1">Loading device details...</span>
+                </div>
+              </div>
+
+            </div>
           </div>
-          <div style="font-size:11px;color:var(--text-3);margin-top:6px">Creates an RMS tag and assigns it to the selected device</div>
         </div>
-      </div>
 
-      <div class="card" id="cfg-summary-card" style="display:none">
-        <div class="card-header"><span class="card-title">Configuration Summary</span></div>
-        <div class="card-body" id="cfg-summary-body"></div>
-        <div class="status-bar">
-          <span class="status-label">Status:</span>
-          <span class="status-val" id="cfg-status-val">Ready</span>
-          <div class="progress-rail"><div class="progress-fill" id="cfg-progress"></div></div>
-          <button class="btn btn-success btn-lg" id="btn-configure" onclick="runConfiguration()" disabled>⚡ Configure controller</button>
-          <button class="btn" onclick="testConnection()">🔌 Test connection</button>
+        <!-- UNTAGGED DEVICE — configure mode -->
+        <div id="mode-untagged" style="display:none">
+          <div class="action-panel">
+            <div class="action-panel-header">
+              <div class="d-icon">📡</div>
+              <div>
+                <div class="action-device-name" id="untagged-dev-name">—</div>
+                <div class="action-device-meta" id="untagged-dev-meta">—</div>
+              </div>
+              <div style="margin-left:auto">
+                <span class="pill pill-green">✓ Ready to configure</span>
+              </div>
+            </div>
+            <div class="action-tabs">
+              <div class="action-tab active" onclick="showActionTab('untagged-configure',this)">⚡ Configure</div>
+              <div class="action-tab" onclick="showActionTab('untagged-url',this)">🔗 URL Builder</div>
+              <div class="action-tab" onclick="showActionTab('untagged-tag',this)">🏷️ Property Tag</div>
+            </div>
+            <div class="action-body">
+
+              <!-- Configure tab -->
+              <div class="action-tab-panel active" id="untagged-configure">
+                <div id="configure-status-banner" class="banner banner-blue" style="margin-bottom:14px">
+                  <span class="banner-icon">ℹ️</span>
+                  <div>
+                    <div class="banner-title">Select a profile above, then click Configure</div>
+                    <div class="banner-sub">Make sure you have chosen the correct controller type and task group before proceeding. This action cannot be undone.</div>
+                  </div>
+                </div>
+                <!-- Summary of what will be configured -->
+                <div class="check-list" id="configure-summary">
+                  <div class="check-row"><span class="check-k">Device</span><span id="cs-device">—</span></div>
+                  <div class="check-row"><span class="check-k">Serial</span><span id="cs-serial" style="font-family:var(--mono);font-size:11px">—</span></div>
+                  <div class="check-row"><span class="check-k">Mobile IP</span><span id="cs-ip" style="font-family:var(--mono);font-size:11px">—</span></div>
+                  <div class="check-row"><span class="check-k">Controller type</span><span id="cs-ctrl">—</span></div>
+                  <div class="check-row"><span class="check-k">Profile (task group)</span><span id="cs-profile">—</span></div>
+                </div>
+                <div class="divider"></div>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <div class="progress-rail" style="flex:1"><div class="progress-fill" id="cfg-progress"></div></div>
+                  <span class="status-val" id="cfg-status-val" style="font-size:11px"></span>
+                  <button class="btn btn-success btn-lg" id="btn-configure" onclick="runConfiguration()" disabled>
+                    ⚡ Configure controller
+                  </button>
+                </div>
+                <div id="configure-result" style="margin-top:14px"></div>
+              </div>
+
+              <!-- URL Builder tab (for untagged — before configure) -->
+              <div class="action-tab-panel" id="untagged-url">
+                <div class="grid-3" style="margin-bottom:14px">
+                  <div class="field">
+                    <label>Controller IP</label>
+                    <select id="untagged-ctrl-ip" onchange="buildUntaggedUrl()">
+                      <option value="">— select controller type first —</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Port (auto)</label>
+                    <input type="text" id="untagged-port" readonly class="mono" placeholder="Auto">
+                  </div>
+                  <div class="field">
+                    <label>Controller type</label>
+                    <input type="text" id="untagged-ctrl-type-display" readonly>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Generated URL</label>
+                  <div class="url-box">
+                    <span>🔗</span>
+                    <span class="url-text" id="untagged-url-display" style="color:var(--text-3)">http://&lt;mobile-ip&gt;:&lt;port&gt;</span>
+                    <button class="btn" onclick="copyUntaggedUrl()">📋 Copy</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Property Tag tab -->
+              <div class="action-tab-panel" id="untagged-tag">
+                <div class="inline" style="margin-bottom:8px">
+                  <div class="field">
+                    <label>Property name</label>
+                    <input type="text" id="prop-name" placeholder="e.g. Smith Pool, Apartment Complex A">
+                  </div>
+                  <button class="btn btn-primary" onclick="assignTag()">🏷️ Create &amp; assign tag</button>
+                </div>
+                <div style="font-size:11px;color:var(--text-3)">Creates an RMS tag and assigns it to this device</div>
+              </div>
+
+            </div>
+          </div>
         </div>
-      </div>
 
+      </div><!-- /action-panel-wrap -->
+
+      <!-- Log -->
       <div>
         <div style="font-size:10px;font-weight:600;letter-spacing:0.5px;color:var(--text-3);text-transform:uppercase;margin-bottom:6px">Activity log</div>
         <div class="log" id="main-log"></div>
       </div>
 
-    </div>
+    </div><!-- /panel-config -->
 
-    <!-- URL BUILDER -->
-    <div id="panel-urlbuilder" style="display:none;flex-direction:column;gap:16px">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Device Information</span>
-          <button class="btn" onclick="refreshDeviceInfo()">🔄 Refresh</button>
-        </div>
-        <div class="card-body">
-          <div class="info-grid">
-            <span class="info-k">Selected device</span><span class="info-v" id="ui-dev-name" style="color:var(--text-3)">No device selected</span>
-            <span class="info-k">Serial number</span><span class="info-v mono" id="ui-dev-serial" style="color:var(--text-3)">Auto-filled</span>
-            <span class="info-k">Mobile IP</span><span class="info-v mono" id="ui-dev-ip" style="color:var(--text-3)">Auto-filled</span>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Controller Settings</span></div>
-        <div class="card-body">
-          <div class="grid-3">
-            <div class="field">
-              <label>Controller IP</label>
-              <select id="ctrl-ip-select" onchange="buildUrl()">
-                <option value="">— select controller type first —</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Port (auto)</label>
-              <input type="text" id="url-port" readonly class="mono" placeholder="Auto">
-            </div>
-            <div class="field">
-              <label>Controller type</label>
-              <input type="text" id="url-ctrl-type" readonly placeholder="From config tab">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">Generated URL</span></div>
-        <div class="card-body">
-          <div class="url-box">
-            <span>🔗</span>
-            <span class="url-text" id="gen-url" style="color:var(--text-3)">http://&lt;mobile-ip&gt;:&lt;port&gt;</span>
-            <button class="btn" onclick="copyUrl()">📋 Copy</button>
-          </div>
-        </div>
-      </div>
-      <div class="card" id="vp-section" style="display:none">
-        <div class="card-header"><span class="card-title">VivoPoint Configuration</span></div>
-        <div class="card-body">
-          <div class="warn-banner" style="margin-bottom:12px">⚠️ Sensor labels changed from the default will not be translated.</div>
-          <div class="grid-2">
-            <div class="field">
-              <label>Body of water</label>
-              <select id="bow-select" onchange="document.getElementById('vp-uuid').value=''">
-                <option value="">— select —</option>
-                <option>BW1</option><option>BW2</option><option>BW3</option><option>BW4</option><option>BW5</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Device UUID</label>
-              <div style="display:flex;gap:6px">
-                <input type="text" id="vp-uuid" readonly class="mono" placeholder="Select body of water first" style="flex:1">
-                <button class="btn btn-primary" onclick="getUuid()">Get UUID</button>
-                <button class="btn" onclick="navigator.clipboard?.writeText(document.getElementById('vp-uuid').value)">📋</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- DEVICE INFO -->
+    <!-- ════════════════════════════════════════════════════════════
+         DEVICE INFO PANEL
+    ═════════════════════════════════════════════════════════════ -->
     <div id="panel-devinfo" style="display:none;flex-direction:column;gap:16px">
       <div class="card">
         <div class="card-header">
           <span class="card-title">Device Details</span>
-          <button class="btn btn-primary" onclick="getDeviceInfo()">📥 Get device info</button>
+          <button class="btn btn-primary" onclick="getDeviceInfo()">📥 Fetch device info</button>
         </div>
         <div class="card-body" id="devinfo-body">
-          <div style="font-size:12px;color:var(--text-3);padding:10px 0;text-align:center">Select a device on Controller Setup, then click "Get device info".</div>
+          <div style="font-size:12px;color:var(--text-3);padding:10px 0;text-align:center">Select a device on Controller Setup, then click "Fetch device info".</div>
         </div>
       </div>
     </div>
 
-    <!-- LOG -->
+    <!-- ════════════════════════════════════════════════════════════
+         LOG PANEL
+    ═════════════════════════════════════════════════════════════ -->
     <div id="panel-log" style="display:none;flex-direction:column;gap:16px">
       <div class="card">
         <div class="card-header">
@@ -365,58 +485,96 @@ body { font-family: var(--font); background: var(--surface); color: var(--text);
 
   </main>
 </div>
+
 <script>
+// ═════════════════════════════════════════════════════════════════════════════
+// CONTROLLER PATTERNS
+// Mirrors the Python logic exactly.
+// Each entry: { keywords: required words that ALL must appear in task group name }
+// Walchem SingleBody excludes groups whose name also contains "dualbody"/"dual body"
+// ═════════════════════════════════════════════════════════════════════════════
+const CTRL_PATTERNS = {
+  "ABB":               { keywords: ["abb", "acs580", "vfd", "full", "profile"],          exclude: [] },
+  "Walchem DualBody":  { keywords: ["walchem", "dualbody", "full", "profile"],           exclude: [] },
+  "Walchem SingleBody":{ keywords: ["walchem", "full", "profile"],                       exclude: ["dualbody"] },
+  "Chemtrol":          { keywords: ["chemtrol", "modbus", "full", "profile"],            exclude: [] },
+  "BECs":              { keywords: ["becs", "full", "modbus", "profile"],                exclude: [] },
+  "Prominent":         { keywords: ["prominent"],                                         exclude: [] },
+};
+
+// Prominent devices only need URL/UUID — no task group push
+const PROMINENT_ONLY_URL = true;
+const PROMINENT_TYPE = "Prominent";
+
 // ─────────────────────────────────────────────────────────────────────────────
-// IP ranges
+// IP ranges (from Python source)
 // ─────────────────────────────────────────────────────────────────────────────
 const IP_RANGES = {
-  "Walchem":         {"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
-  "Walchem DualBody":{"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
-  "Chemtrol":        {"192.168.1.24":8585,"192.168.1.25":8586,"192.168.1.26":8587,"192.168.1.27":8588,"192.168.1.28":8589},
-  "BECs":            {"10.10.6.131":8585,"10.10.6.132":8586,"10.10.6.133":8587,"10.10.6.134":8588,"10.10.6.135":8589},
-  "ABB":             {"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
-  "Prominent":       {"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
+  "ABB":               {"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
+  "Walchem DualBody":  {"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
+  "Walchem SingleBody":{"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
+  "Chemtrol":          {"192.168.1.24":8585,"192.168.1.25":8586,"192.168.1.26":8587,"192.168.1.27":8588,"192.168.1.28":8589},
+  "BECs":              {"10.10.6.131":8585,"10.10.6.132":8586,"10.10.6.133":8587,"10.10.6.134":8588,"10.10.6.135":8589},
+  "Prominent":         {"10.10.6.106":8585,"10.10.6.107":8586,"10.10.6.108":8587,"10.10.6.109":8588,"10.10.6.110":8589},
 };
-const CTRL_KEYWORDS = ['walchem','chemtrol','becs','prominent','abb'];
 
-function inferCtrl(name) {
-  const n = (name||'').toLowerCase();
-  if (n.includes('walchem') && (n.includes('dual') || n.includes('dualbody'))) return 'Walchem DualBody';
-  if (n.includes('walchem'))   return 'Walchem';
-  if (n.includes('chemtrol'))  return 'Chemtrol';
-  if (n.includes('becs'))      return 'BECs';
-  if (n.includes('abb'))       return 'ABB';
-  if (n.includes('prominent')) return 'Prominent';
-  return null;
+// Tag keywords that mark a device as already configured
+const CONFIGURED_TAG_KEYWORDS = ['walchem','chemtrol','becs','prominent','abb'];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Match a task group name to a controller type using CTRL_PATTERNS
+// ─────────────────────────────────────────────────────────────────────────────
+function matchTaskGroup(tgName, ctrlType) {
+  const n = (tgName || '').toLowerCase();
+  const pattern = CTRL_PATTERNS[ctrlType];
+  if (!pattern) return false;
+  // All keywords must appear
+  const allPresent = pattern.keywords.every(kw => n.includes(kw));
+  if (!allPresent) return false;
+  // None of the exclude words may appear
+  const anyExcluded = pattern.exclude.some(ex => n.includes(ex));
+  return !anyExcluded;
 }
 
-function escHtml(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// Infer ctrl type from a tag name (for already-configured devices)
+function inferCtrlFromTag(tagName) {
+  const n = (tagName || '').toLowerCase();
+  if (n.includes('prominent'))  return 'Prominent';
+  if (n.includes('dual'))       return 'Walchem DualBody';
+  if (n.includes('walchem'))    return 'Walchem SingleBody';
+  if (n.includes('chemtrol'))   return 'Chemtrol';
+  if (n.includes('becs'))       return 'BECs';
+  if (n.includes('abb'))        return 'ABB';
+  return tagName;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// State
+// App state
 // ─────────────────────────────────────────────────────────────────────────────
 const S = {
   devices: [],
-  taskGroups: [],      // [{id, name, ctrl}]
+  taskGroups: [],           // raw from RMS
   selectedDevice: null,
   configuredSerials: new Set(),
-  deviceCtrlType: {},  // serial -> ctrl type string
+  deviceCtrlTag: {},        // serial -> tag name string (from RMS tag)
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Logging — writes to both inline log and full log panel simultaneously
+// Utilities
 // ─────────────────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 function log(msg, cls) {
   const ts = new Date().toLocaleTimeString('en-US',{hour12:false});
   ['main-log','full-log'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    const span = document.createElement('span');
-    if (cls) span.className = cls;
-    span.textContent = `[${ts}] ${msg}`;
-    el.appendChild(span);
+    const sp = document.createElement('span');
+    if (cls) sp.className = cls;
+    sp.textContent = '[' + ts + '] ' + msg;
+    el.appendChild(sp);
     el.appendChild(document.createTextNode('\n'));
     el.scrollTop = el.scrollHeight;
   });
@@ -426,179 +584,212 @@ function clearLog() {
   ['main-log','full-log'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=''; });
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Panel switching
-// ─────────────────────────────────────────────────────────────────────────────
-function showPanel(id, navEl) {
-  ['config','urlbuilder','devinfo','log'].forEach(p => {
-    const el = document.getElementById('panel-'+p);
-    if (!el) return;
-    if (p === id) {
-      el.style.display = (p === 'config') ? 'block' : 'flex';
-    } else {
-      el.style.display = 'none';
-    }
-  });
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if (navEl) navEl.classList.add('active');
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Status / progress helpers
-// ─────────────────────────────────────────────────────────────────────────────
 function setStatus(msg, cls) {
   const el = document.getElementById('cfg-status-val');
   if (!el) return;
   el.textContent = msg;
   el.className = 'status-val' + (cls ? ' '+cls : '');
 }
+
 function setProgress(on) {
   const el = document.getElementById('cfg-progress');
   if (el) el.classList.toggle('anim', on);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// API proxy helper
-// ─────────────────────────────────────────────────────────────────────────────
-async function api(path, opts) {
-  opts = opts || {};
-  const fetchOpts = {
-    method: opts.method || 'GET',
-    headers: {'Content-Type':'application/json'},
-  };
-  if (opts.body) fetchOpts.body = JSON.stringify(opts.body);
-  const r = await fetch('/api' + path, fetchOpts);
-  const text = await r.text();
-  let json;
-  try { json = JSON.parse(text); } catch(e) { throw new Error('Non-JSON response: ' + text.slice(0,200)); }
-  if (!r.ok) throw new Error(json.error || ('HTTP ' + r.status));
-  return json;
+function showPanel(id, navEl) {
+  ['config','devinfo','log'].forEach(p => {
+    const el = document.getElementById('panel-'+p);
+    if (!el) return;
+    el.style.display = (p===id) ? (p==='config' ? 'block' : 'flex') : 'none';
+  });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (navEl) navEl.classList.add('active');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Init — health check then auto-discover profiles
+// Action tab switcher (inside the device action panel)
 // ─────────────────────────────────────────────────────────────────────────────
-async function init() {
-  try {
-    const data = await api('/health');
-    const dot = document.getElementById('conn-dot');
-    const lbl = document.getElementById('conn-label');
-    if (data.ok && data.token_set) {
-      dot.classList.add('live');
-      lbl.textContent = 'RMS connected';
-      log('RMS API token verified', 'ok');
-      discoverProfiles();   // fire and forget — non-blocking
-    } else {
-      dot.classList.add('err');
-      lbl.textContent = 'Token missing';
-      log('RMS_API_TOKEN not set in Railway environment variables', 'err');
-      document.getElementById('disc-status').innerHTML = '<span style="color:var(--red)">✗ Token missing</span>';
-    }
-  } catch(e) {
-    document.getElementById('conn-dot').classList.add('err');
-    document.getElementById('conn-label').textContent = 'Offline';
-    log('Cannot reach backend: ' + e.message, 'err');
+function showActionTab(id, tabEl) {
+  // Find sibling panels and tabs
+  const clickedTab = tabEl || document.querySelector('.action-tab.active');
+  const panelEl = document.getElementById(id);
+  if (!panelEl) return;
+  const container = panelEl.closest('.action-body');
+  if (container) {
+    container.querySelectorAll('.action-tab-panel').forEach(p => p.classList.remove('active'));
+  }
+  panelEl.classList.add('active');
+  // Tabs
+  if (tabEl) {
+    const tabContainer = tabEl.closest('.action-tabs');
+    if (tabContainer) tabContainer.querySelectorAll('.action-tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Profile discovery — auto-runs on load, also callable via Refresh button
-// KEY FIX: always shows all task groups in profile dropdown, not just matched
+// API proxy
+// ─────────────────────────────────────────────────────────────────────────────
+async function api(path, opts) {
+  opts = opts || {};
+  const r = await fetch('/api' + path, {
+    method: opts.method || 'GET',
+    headers: {'Content-Type':'application/json'},
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  const text = await r.text();
+  let json;
+  try { json = JSON.parse(text); } catch(e) { throw new Error('Non-JSON: ' + text.slice(0,120)); }
+  if (!r.ok) throw new Error(json.error || 'HTTP ' + r.status);
+  return json;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const d = await api('/health');
+    const dot = document.getElementById('conn-dot');
+    const lbl = document.getElementById('conn-label');
+    if (d.ok && d.token_set) {
+      dot.classList.add('live');
+      lbl.textContent = 'RMS connected';
+      log('RMS API token verified', 'ok');
+      discoverProfiles();
+    } else {
+      dot.classList.add('err'); lbl.textContent = 'Token missing';
+      log('Set RMS_API_TOKEN in Railway environment variables', 'err');
+      document.getElementById('disc-status').innerHTML = '<span style="color:var(--red)">✗ Token not set</span>';
+    }
+  } catch(e) {
+    document.getElementById('conn-dot').classList.add('err');
+    document.getElementById('conn-label').textContent = 'Offline';
+    log('Backend unreachable: ' + e.message, 'err');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Profile discovery — auto on load
 // ─────────────────────────────────────────────────────────────────────────────
 async function discoverProfiles() {
-  document.getElementById('disc-status').innerHTML = '<span class="spin">⏳</span> Loading profiles...';
+  document.getElementById('disc-status').innerHTML = '<span class="spin">⏳</span> Loading task groups...';
   document.getElementById('ctrl-select').disabled = true;
   document.getElementById('profile-select').disabled = true;
   log('Fetching task groups from RMS...', 'info');
 
   try {
-    const tgData = await api('/task-groups');
-    const groups = (tgData.data || []);
+    const data = await api('/task-groups');
+    S.taskGroups = (data.data || []).map(tg => ({id: tg.id, name: tg.name}));
+    log('Loaded ' + S.taskGroups.length + ' task groups from RMS', 'ok');
 
-    S.taskGroups = groups.map(tg => ({ id: tg.id, name: tg.name, ctrl: inferCtrl(tg.name) }));
-    log('Loaded ' + S.taskGroups.length + ' task groups', 'ok');
-
-    // Controller dropdown — always include all 6 known types
+    // Populate controller type dropdown — fixed list, always all 6
     const ctrlSel = document.getElementById('ctrl-select');
     ctrlSel.innerHTML = '<option value="">— select controller type —</option>';
-    ['Walchem','Walchem DualBody','Chemtrol','BECs','ABB','Prominent'].forEach(c => {
-      const o = document.createElement('option');
-      o.value = c; o.textContent = c;
+    Object.keys(CTRL_PATTERNS).forEach(c => {
+      const o = document.createElement('option'); o.value = c; o.textContent = c;
       ctrlSel.appendChild(o);
     });
     ctrlSel.disabled = false;
 
+    // Show summary of how many task groups matched each ctrl type
+    const matchCounts = {};
+    Object.keys(CTRL_PATTERNS).forEach(c => {
+      matchCounts[c] = S.taskGroups.filter(tg => matchTaskGroup(tg.name, c)).length;
+    });
+    const summary = Object.entries(matchCounts)
+      .filter(([,n]) => n > 0)
+      .map(([c,n]) => c + ' (' + n + ')')
+      .join(' · ');
+
     document.getElementById('disc-status').innerHTML =
-      '<span style="color:var(--teal);font-weight:500">✓ ' + S.taskGroups.length + ' task groups loaded</span>';
+      '<span style="color:var(--teal);font-weight:500">✓ ' + S.taskGroups.length + ' task groups — matched: ' + (summary||'none') + '</span>';
 
   } catch(e) {
     log('Profile discovery failed: ' + e.message, 'err');
-    document.getElementById('disc-status').innerHTML = '<span style="color:var(--red)">✗ Failed — click Refresh to retry</span>';
+    document.getElementById('disc-status').innerHTML = '<span style="color:var(--red)">✗ Failed — click Refresh</span>';
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Controller type selected → populate profile dropdown
-// KEY FIX: if no task groups match the ctrl name, fall back to showing ALL
+// Controller type change → filter task groups with CTRL_PATTERNS
 // ─────────────────────────────────────────────────────────────────────────────
 function onCtrlChange() {
   const ctrl = document.getElementById('ctrl-select').value;
   const profileSel = document.getElementById('profile-select');
+  const noteEl = document.getElementById('profile-match-note');
   profileSel.innerHTML = '<option value="">— select profile —</option>';
 
   if (!ctrl) {
     profileSel.disabled = true;
-    checkConfigBtn(); updateSummary(); return;
+    noteEl.textContent = '';
+    refreshConfigSummary();
+    return;
   }
 
-  // Match by inferred ctrl OR by keyword in name
-  const keyword = ctrl.toLowerCase().split(' ')[0]; // e.g. "walchem", "chemtrol"
-  let matched = S.taskGroups.filter(tg =>
-    tg.ctrl === ctrl || (tg.name||'').toLowerCase().includes(keyword)
-  );
+  // Special case: Prominent devices don't need a task group
+  if (ctrl === PROMINENT_TYPE) {
+    profileSel.innerHTML = '<option value="prominent-url-only">URL / UUID only — no task group needed</option>';
+    profileSel.disabled = false;
+    noteEl.innerHTML = '<span style="color:var(--amber)">⚠️ Prominent controllers only need the URL Builder — no RMS configuration is pushed.</span>';
+    // Update URL builder dropdowns
+    updateUrlDropdowns(ctrl);
+    refreshConfigSummary();
+    checkConfigBtn();
+    return;
+  }
 
-  // Fallback: if nothing matched (task groups might have different naming), show all
+  // Match task groups using the pattern
+  const matched = S.taskGroups.filter(tg => matchTaskGroup(tg.name, ctrl));
+
   if (matched.length === 0) {
-    matched = S.taskGroups;
-    if (matched.length > 0) log('No task groups matched "' + ctrl + '" by name — showing all ' + matched.length, 'warn');
+    profileSel.innerHTML = '<option value="">— no matching task groups found —</option>';
+    profileSel.disabled = true;
+    noteEl.innerHTML = '<span style="color:var(--red)">✗ No task groups matched "' + esc(ctrl) + '" in RMS. Check that the task group exists and is named correctly.</span>';
+    log('No task groups matched controller: ' + ctrl, 'warn');
+  } else {
+    matched.forEach(tg => {
+      const o = document.createElement('option'); o.value = tg.id; o.textContent = tg.name;
+      profileSel.appendChild(o);
+    });
+    profileSel.disabled = false;
+    noteEl.innerHTML = '<span style="color:var(--teal)">✓ ' + matched.length + ' matching task group' + (matched.length>1?'s':'') + ' found</span>';
+    log('Controller "' + ctrl + '" matched ' + matched.length + ' task groups', 'ok');
   }
 
-  matched.forEach(tg => {
-    const o = document.createElement('option');
-    o.value = tg.id; o.textContent = tg.name;
-    profileSel.appendChild(o);
-  });
-
-  profileSel.disabled = matched.length === 0;
-  if (matched.length === 0) {
-    profileSel.innerHTML = '<option value="">— no task groups found —</option>';
-    log('No task groups available — check RMS profiles', 'warn');
-  }
-
-  // Update URL builder
-  document.getElementById('url-ctrl-type').value = ctrl;
-  updateCtrlIpDropdown(ctrl);
+  updateUrlDropdowns(ctrl);
+  refreshConfigSummary();
   checkConfigBtn();
-  updateSummary();
 }
 
-function updateCtrlIpDropdown(ctrl) {
-  const sel = document.getElementById('ctrl-ip-select');
-  sel.innerHTML = '<option value="">— select —</option>';
-  if (ctrl && IP_RANGES[ctrl]) {
-    Object.keys(IP_RANGES[ctrl]).forEach(ip => {
-      const o = document.createElement('option'); o.value = ip; o.textContent = ip;
-      sel.appendChild(o);
-    });
-  }
-  document.getElementById('url-port').value = '';
-  buildUrl();
+function onProfileChange() {
+  refreshConfigSummary();
+  checkConfigBtn();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Device list
-// KEY FIX: listeners attached via addEventListener after innerHTML set, NOT
-// via onclick= attributes (avoids frozen-page / unclickable rows bug)
+// Update controller IP dropdowns (both untagged URL builder and tagged URL builder)
+// ─────────────────────────────────────────────────────────────────────────────
+function updateUrlDropdowns(ctrl) {
+  ['untagged-ctrl-ip', 'tagged-ctrl-ip'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '<option value="">— select —</option>';
+    if (ctrl && IP_RANGES[ctrl]) {
+      Object.keys(IP_RANGES[ctrl]).forEach(ip => {
+        const o = document.createElement('option'); o.value = ip; o.textContent = ip;
+        sel.appendChild(o);
+      });
+    }
+  });
+  document.getElementById('untagged-ctrl-type-display').value = ctrl || '';
+  document.getElementById('tagged-ctrl-type-display').value = ctrl || '';
+  buildUntaggedUrl();
+  buildTaggedUrl();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// List devices from RMS
 // ─────────────────────────────────────────────────────────────────────────────
 async function listDevices() {
   const btn = document.getElementById('btn-list');
@@ -608,18 +799,18 @@ async function listDevices() {
   try {
     const data = await api('/devices');
     S.devices = data.data || [];
-    // Pre-populate configured state from tags that came with the list
+
+    // Pre-mark configured status from tags that come with the list
     S.devices.forEach(d => {
-      (d.tags||[]).forEach(tag => {
+      (d.tags || []).forEach(tag => {
         const tn = (tag.name||'').toLowerCase();
-        CTRL_KEYWORDS.forEach(p => {
-          if (tn.includes(p)) {
-            S.configuredSerials.add(d.serial);
-            if (!S.deviceCtrlType[d.serial]) S.deviceCtrlType[d.serial] = tag.name;
-          }
-        });
+        if (CONFIGURED_TAG_KEYWORDS.some(k => tn.includes(k))) {
+          S.configuredSerials.add(d.serial);
+          if (!S.deviceCtrlTag[d.serial]) S.deviceCtrlTag[d.serial] = tag.name;
+        }
       });
     });
+
     log('Loaded ' + S.devices.length + ' devices', 'ok');
     renderDeviceList(S.devices);
   } catch(e) {
@@ -632,73 +823,59 @@ async function listDevices() {
 
 function filterDevices() {
   const q = document.getElementById('device-search').value.toLowerCase();
-  renderDeviceList(q ? S.devices.filter(d =>
-    (d.name||'').toLowerCase().includes(q) || (d.serial||'').includes(q)
-  ) : S.devices);
+  renderDeviceList(q
+    ? S.devices.filter(d => (d.name||'').toLowerCase().includes(q) || (d.serial||'').includes(q))
+    : S.devices);
 }
 
 function renderDeviceList(list) {
   const container = document.getElementById('device-list');
-
   if (!list.length) {
     container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:8px 0">No devices found.</div>';
     return;
   }
-
-  // Build DOM nodes directly — avoids innerHTML + event delegation issues entirely
   container.innerHTML = '';
   list.slice(0, 100).forEach(d => {
-    const configured = S.configuredSerials.has(d.serial);
+    const tagged = S.configuredSerials.has(d.serial);
     const isSelected = S.selectedDevice && S.selectedDevice.id === d.id;
+    const online = d.status === 1;
+    const tagLabel = S.deviceCtrlTag[d.serial] || '';
 
     const row = document.createElement('div');
-    row.className = 'device-row' + (isSelected ? ' selected' : '') + (configured ? ' locked' : '');
+    row.className = 'device-row' + (isSelected ? ' selected' : '') + (tagged ? ' already-tagged' : '');
 
-    const iconEl = document.createElement('div');
-    iconEl.className = 'd-icon';
-    iconEl.textContent = '📡';
+    const icon = document.createElement('div');
+    icon.className = 'd-icon' + (tagged ? ' tagged' : '');
+    icon.textContent = '📡';
 
-    const infoEl = document.createElement('div');
-    infoEl.style.cssText = 'flex:1;min-width:0';
-    infoEl.innerHTML =
-      '<div class="d-name">' + escHtml(d.name||'Unnamed') + '</div>' +
-      '<div class="d-sub">' + (d.status===1 ? '🟢 Online' : '⚫ Offline') + '</div>' +
-      '<div class="d-serial">' + escHtml(d.serial||'—') + '</div>';
+    const info = document.createElement('div');
+    info.style.cssText = 'flex:1;min-width:0';
+    info.innerHTML =
+      '<div class="d-name">' + esc(d.name||'Unnamed') + '</div>' +
+      '<div class="d-sub">' + (online ? '🟢 Online' : '⚫ Offline') + '</div>' +
+      '<div class="d-serial">' + esc(d.serial||'—') + '</div>';
 
-    const rightEl = document.createElement('div');
-    rightEl.className = 'd-right';
-    if (configured) {
-      const pill = document.createElement('span');
-      pill.className = 'pill pill-orange';
-      pill.textContent = '🔒 ' + (S.deviceCtrlType[d.serial] || 'Configured');
-      rightEl.appendChild(pill);
+    const right = document.createElement('div');
+    right.className = 'd-right';
+    if (tagged) {
+      right.innerHTML = '<span class="pill pill-orange">🔒 ' + esc(tagLabel||'Configured') + '</span>' +
+        '<span style="font-size:10px;color:var(--text-3)">Click for URL/UUID</span>';
     } else {
-      const pill = document.createElement('span');
-      pill.className = 'pill pill-blue';
-      pill.textContent = 'Ready';
-      rightEl.appendChild(pill);
+      right.innerHTML = '<span class="pill pill-green">Ready</span>';
     }
 
-    row.appendChild(iconEl);
-    row.appendChild(infoEl);
-    row.appendChild(rightEl);
+    row.appendChild(icon);
+    row.appendChild(info);
+    row.appendChild(right);
 
-    // Attach click — closure over `d` and `configured` is safe here
-    row.addEventListener('click', function() {
-      if (configured) {
-        log('Device "' + d.name + '" is already configured as ' + (S.deviceCtrlType[d.serial]||'controller') + ' — cannot reconfigure', 'warn');
-        setStatus('Already configured — locked', 'warn');
-        return;
-      }
-      selectDevice(d.id);
-    });
-
+    // ALL devices are clickable — tagged ones open in URL/UUID mode
+    row.addEventListener('click', () => selectDevice(d.id));
     container.appendChild(row);
   });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Select device — fetches full detail, checks tags, updates all tabs
+// Select device — determines mode (tagged vs untagged)
 // ─────────────────────────────────────────────────────────────────────────────
 async function selectDevice(deviceId) {
   const d = S.devices.find(x => x.id === deviceId);
@@ -706,136 +883,193 @@ async function selectDevice(deviceId) {
 
   S.selectedDevice = d;
   log('Selected: ' + d.name + ' (' + d.serial + ')', 'info');
+  filterDevices(); // re-render with selected state
 
-  // Re-render list to show selected state
-  filterDevices();
-
+  // Fetch full device detail for tags, mobile IP, etc.
   try {
     const data = await api('/devices/' + deviceId);
     const det = data.data || {};
     d.mobile_ip = det.mobile_ip || '';
+    d.clean_ip  = (d.mobile_ip).split('/')[0];
     d.tags      = det.tags || [];
     d.model     = det.model || '';
     d.imei      = det.imei || '';
     d.firmware  = det.firmware || '';
     d.signal    = det.signal || '';
     d.operator  = det.operator || '';
-    d.clean_ip  = (d.mobile_ip||'').split('/')[0];
+    d.mac       = det.mac || '';
 
-    // Check tags from fresh detail
+    // Re-check tags from fresh detail
     d.tags.forEach(tag => {
       const tn = (tag.name||'').toLowerCase();
-      CTRL_KEYWORDS.forEach(p => {
-        if (tn.includes(p)) {
-          S.configuredSerials.add(d.serial);
-          S.deviceCtrlType[d.serial] = tag.name;
-        }
-      });
+      if (CONFIGURED_TAG_KEYWORDS.some(k => tn.includes(k))) {
+        S.configuredSerials.add(d.serial);
+        S.deviceCtrlTag[d.serial] = S.deviceCtrlTag[d.serial] || tag.name;
+      }
     });
 
-    if (S.configuredSerials.has(d.serial)) {
-      log('⚠ Tagged as "' + S.deviceCtrlType[d.serial] + '" — device is already configured', 'warn');
-      setStatus('Already configured — locked', 'warn');
+    const tagged = S.configuredSerials.has(d.serial);
+    filterDevices(); // re-render with updated tag state
+
+    if (tagged) {
+      openTaggedMode(d);
     } else {
-      log('Ready — mobile IP: ' + (d.clean_ip||'none'), 'ok');
-      setStatus('Device selected', 'info');
-    }
-
-    updateUrlTab(d);
-    filterDevices();  // re-render with updated lock state
-    document.getElementById('cfg-summary-card').style.display = '';
-    updateSummary();
-    checkConfigBtn();
-
-    // VivoPoint section: show if configured and not Prominent
-    const ctrlTag = (S.deviceCtrlType[d.serial]||'').toLowerCase();
-    if (S.configuredSerials.has(d.serial) && !ctrlTag.includes('prominent')) {
-      document.getElementById('vp-section').style.display = '';
+      openUntaggedMode(d);
     }
 
   } catch(e) {
-    log('Failed to load device detail: ' + e.message, 'err');
+    log('Failed to fetch device detail: ' + e.message, 'err');
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// URL Builder
+// TAGGED MODE — device already has a controller tag
+// Shows URL builder + UUID, no configure button
 // ─────────────────────────────────────────────────────────────────────────────
-function updateUrlTab(d) {
-  document.getElementById('ui-dev-name').textContent = d.name||'—';
-  document.getElementById('ui-dev-name').style.color = 'var(--text)';
-  document.getElementById('ui-dev-serial').textContent = d.serial||'—';
-  document.getElementById('ui-dev-serial').style.color = 'var(--text)';
-  const ip = d.clean_ip||'';
-  document.getElementById('ui-dev-ip').textContent = ip||'No mobile IP';
-  document.getElementById('ui-dev-ip').style.color = ip ? 'var(--teal)' : 'var(--amber)';
-  buildUrl();
+function openTaggedMode(d) {
+  const ctrlTagName = S.deviceCtrlTag[d.serial] || 'Controller';
+  const ctrlType = inferCtrlFromTag(ctrlTagName);
+
+  log('Device "' + d.name + '" is tagged as "' + ctrlTagName + '" — opening URL/UUID mode', 'warn');
+
+  document.getElementById('tagged-dev-name').textContent = d.name || '—';
+  document.getElementById('tagged-dev-meta').textContent = d.serial + ' · ' + (d.clean_ip || 'No mobile IP');
+  document.getElementById('tagged-ctrl-pill').textContent = '🔒 ' + ctrlTagName;
+  document.getElementById('tagged-ctrl-type-display').value = ctrlType;
+
+  // Populate IP dropdown for this ctrl type
+  const ipSel = document.getElementById('tagged-ctrl-ip');
+  ipSel.innerHTML = '<option value="">— select —</option>';
+  if (IP_RANGES[ctrlType]) {
+    Object.keys(IP_RANGES[ctrlType]).forEach(ip => {
+      const o = document.createElement('option'); o.value = ip; o.textContent = ip;
+      ipSel.appendChild(o);
+    });
+  }
+
+  // Mobile IP display
+  document.getElementById('tagged-mobile-ip').textContent = d.clean_ip || 'Not available';
+
+  // Device details tab
+  document.getElementById('tagged-details-body').innerHTML =
+    '<span class="info-k">Device name</span><span class="info-v">'    + esc(d.name||'—') + '</span>' +
+    '<span class="info-k">Serial</span><span class="info-v mono">'    + esc(d.serial||'—') + '</span>' +
+    '<span class="info-k">Model</span><span class="info-v">'          + esc(d.model||'—') + '</span>' +
+    '<span class="info-k">Mobile IP</span><span class="info-v mono">' + esc(d.clean_ip||'—') + '</span>' +
+    '<span class="info-k">IMEI</span><span class="info-v mono">'      + esc(d.imei||'—') + '</span>' +
+    '<span class="info-k">MAC</span><span class="info-v mono">'       + esc(d.mac||'—') + '</span>' +
+    '<span class="info-k">Firmware</span><span class="info-v">'       + esc(d.firmware||'—') + '</span>' +
+    '<span class="info-k">Operator</span><span class="info-v">'       + esc(d.operator||'—') + '</span>' +
+    '<span class="info-k">Signal</span><span class="info-v">'         + (d.signal ? d.signal+' dBm' : '—') + '</span>' +
+    '<span class="info-k">Controller tag</span><span class="info-v"><span class="pill pill-orange">🔒 ' + esc(ctrlTagName) + '</span></span>';
+
+  buildTaggedUrl();
+
+  // Show tagged panel
+  document.getElementById('action-panel-wrap').style.display = '';
+  document.getElementById('mode-tagged').style.display = '';
+  document.getElementById('mode-untagged').style.display = 'none';
+
+  // Reset to URL tab
+  document.getElementById('tagged-url').classList.add('active');
+  document.getElementById('tagged-uuid').classList.remove('active');
+  document.getElementById('tagged-details').classList.remove('active');
+  document.querySelectorAll('#mode-tagged .action-tab').forEach((t,i) => t.classList.toggle('active', i===0));
 }
 
-function buildUrl() {
-  const ip   = document.getElementById('ctrl-ip-select').value;
+// ─────────────────────────────────────────────────────────────────────────────
+// UNTAGGED MODE — device is ready to configure
+// ─────────────────────────────────────────────────────────────────────────────
+function openUntaggedMode(d) {
+  const offline = d.status !== 1;
+  if (offline) {
+    log('Device "' + d.name + '" is offline — cannot configure until online', 'warn');
+  } else {
+    log('Device "' + d.name + '" ready — opening configure mode', 'ok');
+  }
+
+  document.getElementById('untagged-dev-name').textContent = d.name || '—';
+  document.getElementById('untagged-dev-meta').textContent = d.serial + ' · ' + (d.clean_ip || 'No mobile IP') + (offline ? ' · ⚫ Offline' : ' · 🟢 Online');
+
+  // Sync URL builder with currently selected ctrl type
   const ctrl = document.getElementById('ctrl-select').value;
-  const mip  = S.selectedDevice ? (S.selectedDevice.clean_ip||'') : '';
-  const port = (ctrl && ip && IP_RANGES[ctrl]) ? (IP_RANGES[ctrl][ip]||'') : '';
-  document.getElementById('url-port').value = port||'';
-  const url = (mip && port) ? 'http://'+mip+':'+port : 'http://<mobile-ip>:<port>';
-  const el = document.getElementById('gen-url');
-  el.textContent = url;
-  el.style.color = (mip && port) ? 'var(--text)' : 'var(--text-3)';
-}
+  document.getElementById('untagged-ctrl-type-display').value = ctrl || '';
+  const ipSel = document.getElementById('untagged-ctrl-ip');
+  ipSel.innerHTML = '<option value="">— select —</option>';
+  if (ctrl && IP_RANGES[ctrl]) {
+    Object.keys(IP_RANGES[ctrl]).forEach(ip => {
+      const o = document.createElement('option'); o.value = ip; o.textContent = ip;
+      ipSel.appendChild(o);
+    });
+  }
+  buildUntaggedUrl();
 
-function copyUrl() {
-  const url = document.getElementById('gen-url').textContent;
-  navigator.clipboard && navigator.clipboard.writeText(url);
-  log('Copied URL: ' + url, 'info');
-}
+  // Show untagged panel
+  document.getElementById('action-panel-wrap').style.display = '';
+  document.getElementById('mode-untagged').style.display = '';
+  document.getElementById('mode-tagged').style.display = 'none';
 
-async function refreshDeviceInfo() {
-  if (S.selectedDevice) await selectDevice(S.selectedDevice.id);
-}
+  // Reset to Configure tab
+  document.getElementById('untagged-configure').classList.add('active');
+  document.getElementById('untagged-url').classList.remove('active');
+  document.getElementById('untagged-tag').classList.remove('active');
+  document.querySelectorAll('#mode-untagged .action-tab').forEach((t,i) => t.classList.toggle('active', i===0));
 
-function getUuid() {
-  const bow = document.getElementById('bow-select').value;
-  if (!bow || !S.selectedDevice) return;
-  document.getElementById('vp-uuid').value = S.selectedDevice.id||'—';
-  log('UUID set for ' + bow, 'ok');
+  refreshConfigSummary();
+  checkConfigBtn();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Config summary + button state
+// Config summary (untagged configure tab)
 // ─────────────────────────────────────────────────────────────────────────────
-function updateSummary() {
+function refreshConfigSummary() {
   const d = S.selectedDevice;
-  if (!d) return;
-  const ctrl       = document.getElementById('ctrl-select').value;
+  const ctrl = document.getElementById('ctrl-select').value;
   const profileSel = document.getElementById('profile-select');
-  const profile    = (profileSel.selectedIndex > 0) ? profileSel.options[profileSel.selectedIndex].text : '—';
-  const configured = S.configuredSerials.has(d.serial);
+  const profile = (profileSel.selectedIndex > 0) ? profileSel.options[profileSel.selectedIndex].text : '—';
 
-  document.getElementById('cfg-summary-body').innerHTML =
-    '<div class="check-list">' +
-    '<div class="check-row"><span class="check-k">Device</span><span style="font-weight:500">' + escHtml(d.name||'—') + '</span></div>' +
-    '<div class="check-row"><span class="check-k">Serial</span><span style="font-family:var(--mono);font-size:11px">' + escHtml(d.serial||'—') + '</span></div>' +
-    '<div class="check-row"><span class="check-k">Mobile IP</span><span style="font-family:var(--mono);font-size:11px">' + escHtml(d.clean_ip||'—') + '</span></div>' +
-    '<div class="check-row"><span class="check-k">Controller type</span><span>' + escHtml(ctrl||'—') + '</span></div>' +
-    '<div class="check-row"><span class="check-k">Profile</span><span>' + escHtml(profile) + '</span></div>' +
-    '<div class="check-row"><span class="check-k">Status</span><span>' +
-      (configured
-        ? '<span class="pill pill-orange">🔒 Already configured — ' + escHtml(S.deviceCtrlType[d.serial]||'') + '</span>'
-        : '<span class="pill pill-green">✓ Ready to configure</span>') +
-    '</span></div>' +
-    '</div>';
+  document.getElementById('cs-device').textContent  = d ? (d.name||'—') : '—';
+  document.getElementById('cs-serial').textContent  = d ? (d.serial||'—') : '—';
+  document.getElementById('cs-ip').textContent      = d ? (d.clean_ip||'—') : '—';
+  document.getElementById('cs-ctrl').textContent    = ctrl || '—';
+  document.getElementById('cs-profile').textContent = profile;
 }
 
 function checkConfigBtn() {
-  const ctrl    = document.getElementById('ctrl-select').value;
-  const profile = document.getElementById('profile-select').value;
-  const d       = S.selectedDevice;
-  const configured = d && S.configuredSerials.has(d.serial);
-  const btn = document.getElementById('btn-configure');
-  const ready = !!(d && ctrl && profile && !configured);
+  const ctrl       = document.getElementById('ctrl-select').value;
+  const profileVal = document.getElementById('profile-select').value;
+  const d          = S.selectedDevice;
+  const tagged     = d && S.configuredSerials.has(d.serial);
+  const offline    = d && d.status !== 1;
+  const btn        = document.getElementById('btn-configure');
+  const banner     = document.getElementById('configure-status-banner');
+
+  // Prominent: URL only — no configure
+  if (ctrl === PROMINENT_TYPE) {
+    btn.disabled = true;
+    btn.innerHTML = '⚠️ Prominent — URL only';
+    if (banner) { banner.className = 'banner banner-amber'; banner.innerHTML = '<span class="banner-icon">⚠️</span><div><div class="banner-title">Prominent — URL/UUID only</div><div class="banner-sub">Prominent controllers do not use RMS task group configuration. Use the URL Builder tab instead.</div></div>'; }
+    return;
+  }
+
+  // Offline device — block configure
+  if (offline && !tagged) {
+    btn.disabled = true;
+    btn.innerHTML = '⚫ Device offline — cannot configure';
+    if (banner) { banner.className = 'banner'; banner.style.cssText = 'background:#fde8e5;border:1px solid #f09090;color:#a02a1a;margin-bottom:14px'; banner.innerHTML = '<span class="banner-icon">⚫</span><div><div class="banner-title">Device is offline</div><div class="banner-sub">This device must be online before it can be configured. Wait for it to reconnect to RMS, then try again.</div></div>'; }
+    return;
+  }
+
+  // Normal state — reset banner to info
+  if (banner && !tagged) {
+    banner.className = 'banner banner-blue';
+    banner.style.cssText = 'margin-bottom:14px';
+    banner.innerHTML = '<span class="banner-icon">ℹ️</span><div><div class="banner-title">Select a profile above, then click Configure</div><div class="banner-sub">Make sure you have chosen the correct controller type and task group before proceeding. This action cannot be undone.</div></div>';
+  }
+
+  const ready = !!(d && ctrl && profileVal && profileVal !== 'prominent-url-only' && !tagged && !offline);
   btn.disabled = !ready;
-  if (configured) {
+  if (tagged) {
     btn.innerHTML = '🔒 Device already configured';
   } else {
     btn.innerHTML = '⚡ Configure controller';
@@ -843,21 +1077,73 @@ function checkConfigBtn() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Run configuration
+// URL builders
+// ─────────────────────────────────────────────────────────────────────────────
+function buildTaggedUrl() {
+  const ip   = document.getElementById('tagged-ctrl-ip').value;
+  const ctrl = document.getElementById('tagged-ctrl-type-display').value;
+  const mip  = S.selectedDevice ? (S.selectedDevice.clean_ip||'') : '';
+  const port = (ctrl && ip && IP_RANGES[ctrl]) ? (IP_RANGES[ctrl][ip]||'') : '';
+  document.getElementById('tagged-port').value = port||'';
+  const url = (mip && port) ? 'http://'+mip+':'+port : 'http://<mobile-ip>:<port>';
+  const el = document.getElementById('tagged-url-display');
+  el.textContent = url;
+  el.style.color = (mip && port) ? 'var(--text)' : 'var(--text-3)';
+}
+
+function buildUntaggedUrl() {
+  const ip   = document.getElementById('untagged-ctrl-ip').value;
+  const ctrl = document.getElementById('ctrl-select').value;
+  const mip  = S.selectedDevice ? (S.selectedDevice.clean_ip||'') : '';
+  const port = (ctrl && ip && IP_RANGES[ctrl]) ? (IP_RANGES[ctrl][ip]||'') : '';
+  document.getElementById('untagged-port').value = port||'';
+  const url = (mip && port) ? 'http://'+mip+':'+port : 'http://<mobile-ip>:<port>';
+  const el = document.getElementById('untagged-url-display');
+  el.textContent = url;
+  el.style.color = (mip && port) ? 'var(--text)' : 'var(--text-3)';
+}
+
+function copyTaggedUrl() {
+  const url = document.getElementById('tagged-url-display').textContent;
+  navigator.clipboard && navigator.clipboard.writeText(url);
+  log('Copied URL: ' + url, 'info');
+}
+function copyUntaggedUrl() {
+  const url = document.getElementById('untagged-url-display').textContent;
+  navigator.clipboard && navigator.clipboard.writeText(url);
+  log('Copied URL: ' + url, 'info');
+}
+
+function getTaggedUuid() {
+  const bow = document.getElementById('tagged-bow').value;
+  if (!bow || !S.selectedDevice) return;
+  document.getElementById('tagged-uuid-val').value = S.selectedDevice.id || '—';
+  log('UUID set for ' + bow + ': ' + S.selectedDevice.id, 'ok');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Run configuration — only callable via button, never automatic
 // ─────────────────────────────────────────────────────────────────────────────
 async function runConfiguration() {
-  const d          = S.selectedDevice;
-  const ctrl       = document.getElementById('ctrl-select').value;
-  const profileSel = document.getElementById('profile-select');
-  const taskGroupId= profileSel.value;
-  const profileName= (profileSel.selectedIndex > 0) ? profileSel.options[profileSel.selectedIndex].text : taskGroupId;
+  const d           = S.selectedDevice;
+  const ctrl        = document.getElementById('ctrl-select').value;
+  const profileSel  = document.getElementById('profile-select');
+  const taskGroupId = profileSel.value;
+  const profileName = (profileSel.selectedIndex > 0) ? profileSel.options[profileSel.selectedIndex].text : taskGroupId;
 
-  if (!d || !ctrl || !taskGroupId) return;
+  if (!d || !ctrl || !taskGroupId || taskGroupId === 'prominent-url-only') return;
 
-  // Hard guard — never reconfigure
+  // Hard guard — never configure a tagged device
   if (S.configuredSerials.has(d.serial)) {
-    log('Blocked — ' + d.name + ' is already configured as ' + (S.deviceCtrlType[d.serial]||'controller'), 'warn');
+    log('BLOCKED — ' + d.name + ' already tagged as ' + (S.deviceCtrlTag[d.serial]||'controller'), 'warn');
     setStatus('Already configured — locked', 'warn');
+    return;
+  }
+
+  // Hard guard — never configure an offline device
+  if (d.status !== 1) {
+    log('BLOCKED — ' + d.name + ' is offline', 'warn');
+    setStatus('Device offline — cannot configure', 'warn');
     return;
   }
 
@@ -865,8 +1151,11 @@ async function runConfiguration() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spin">⏳</span> Configuring...';
   setProgress(true);
-  setStatus('Running configuration...', 'info');
+  setStatus('Pushing configuration to RMS...', 'info');
   log('Starting: ' + d.name + ' (' + d.serial + ') → ' + ctrl + ' / ' + profileName, 'info');
+
+  const resultEl = document.getElementById('configure-result');
+  resultEl.innerHTML = '';
 
   try {
     const result = await api('/devices/' + d.id + '/configure', {
@@ -877,70 +1166,64 @@ async function runConfiguration() {
 
     log('✓ Configuration started successfully', 'ok');
     log('✓ RMS executing tasks in background', 'ok');
-    log('✓ ' + d.serial + ' locked from reconfiguration', 'ok');
+    log('✓ ' + d.serial + ' locked — cannot be reconfigured', 'ok');
 
     // Lock it
     S.configuredSerials.add(d.serial);
-    S.deviceCtrlType[d.serial] = ctrl;
+    S.deviceCtrlTag[d.serial] = ctrl;
 
-    setStatus('Configuration started!', 'ok');
     setProgress(false);
+    setStatus('Done!', 'ok');
     btn.innerHTML = '✅ Configured successfully';
 
-    if (!ctrl.toLowerCase().includes('prominent')) {
-      document.getElementById('vp-section').style.display = '';
-    }
-
-    // Prepend confirm banner to summary
-    const existingBody = document.getElementById('cfg-summary-body').innerHTML;
-    document.getElementById('cfg-summary-body').innerHTML =
-      '<div class="confirm-banner">' +
-        '<div class="confirm-icon">✅</div>' +
+    resultEl.innerHTML =
+      '<div class="banner banner-green">' +
+        '<span class="banner-icon">✅</span>' +
         '<div>' +
-          '<div class="confirm-title">Configuration started successfully</div>' +
-          '<div class="confirm-sub">Device: ' + escHtml(d.name) + ' · Profile: ' + escHtml(profileName) + '<br>RMS is executing all tasks in the background. This device is now locked.</div>' +
+          '<div class="banner-title">Configuration started successfully</div>' +
+          '<div class="banner-sub">Device: ' + esc(d.name) + '<br>Profile: ' + esc(profileName) + '<br>RMS is executing all tasks in the background. This device is now locked from reconfiguration.</div>' +
         '</div>' +
-      '</div>' + existingBody;
+      '</div>';
 
-    filterDevices();
+    filterDevices(); // re-render device list with new locked state
 
   } catch(e) {
     log('Configuration failed: ' + e.message, 'err');
-    setStatus('Configuration failed', 'err');
     setProgress(false);
+    setStatus('Failed', 'err');
     btn.disabled = false;
     btn.innerHTML = '⚡ Configure controller';
+    resultEl.innerHTML =
+      '<div class="banner" style="background:#fde8e5;border:1px solid #f09090;color:#a02a1a">' +
+        '<span class="banner-icon">❌</span>' +
+        '<div><div class="banner-title">Configuration failed</div>' +
+        '<div class="banner-sub">' + esc(e.message) + '<br>The device has not been marked as configured. You may try again.</div>' +
+        '</div></div>';
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Misc
+// Property tag assignment
 // ─────────────────────────────────────────────────────────────────────────────
-async function testConnection() {
-  log('Testing RMS connection...', 'info');
-  try {
-    const d = await api('/health');
-    if (d.ok && d.token_set) { log('Connection OK', 'ok'); setStatus('Connected', 'ok'); }
-    else { log('Token not configured', 'err'); }
-  } catch(e) { log('Connection error: ' + e.message, 'err'); }
-}
-
 async function assignTag() {
   const name = document.getElementById('prop-name').value.trim();
   if (!name)             { log('Enter a property name first', 'warn'); return; }
-  if (!S.selectedDevice) { log('Select a device first', 'warn'); return; }
+  if (!S.selectedDevice) { log('No device selected', 'warn'); return; }
   log('Creating tag: "' + name + '"...', 'info');
   try {
     const tagRes = await api('/tags', { method: 'POST', body: { name } });
-    const tagId  = ((tagRes.data||tagRes).id);
+    const tagId  = (tagRes.data || tagRes).id;
     await api('/devices/' + S.selectedDevice.id + '/tags', { method: 'POST', body: { tag_ids: [tagId] } });
     log('Tag "' + name + '" assigned to ' + S.selectedDevice.name, 'ok');
-  } catch(e) { log('Tag assignment failed: ' + e.message, 'err'); }
+  } catch(e) { log('Tag failed: ' + e.message, 'err'); }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Device info panel
+// ─────────────────────────────────────────────────────────────────────────────
 async function getDeviceInfo() {
   if (!S.selectedDevice) {
-    document.getElementById('devinfo-body').innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:10px 0;text-align:center">Select a device on Controller Setup first.</div>';
+    document.getElementById('devinfo-body').innerHTML = '<div style="font-size:12px;color:var(--text-3);text-align:center;padding:10px">Select a device on Controller Setup first.</div>';
     return;
   }
   const d = S.selectedDevice;
@@ -951,26 +1234,26 @@ async function getDeviceInfo() {
     const ip = (det.mobile_ip||'').split('/')[0];
     document.getElementById('devinfo-body').innerHTML =
       '<div class="info-grid">' +
-      '<span class="info-k">Device name</span><span class="info-v">'      + escHtml(det.name||d.name) + '</span>' +
-      '<span class="info-k">Serial</span><span class="info-v mono">'      + escHtml(d.serial||'—') + '</span>' +
-      '<span class="info-k">Model</span><span class="info-v">'            + escHtml(det.model||'—') + '</span>' +
+      '<span class="info-k">Device name</span><span class="info-v">'      + esc(det.name||d.name) + '</span>' +
+      '<span class="info-k">Serial</span><span class="info-v mono">'      + esc(d.serial||'—') + '</span>' +
+      '<span class="info-k">Model</span><span class="info-v">'            + esc(det.model||'—') + '</span>' +
       '<span class="info-k">Status</span><span class="info-v">'           + (det.status===1?'🟢 Online':'⚫ Offline') + '</span>' +
-      '<span class="info-k">Mobile IP</span><span class="info-v mono">'   + escHtml(ip||'—') + '</span>' +
-      '<span class="info-k">IMEI</span><span class="info-v mono">'        + escHtml(det.imei||'—') + '</span>' +
-      '<span class="info-k">MAC</span><span class="info-v mono">'         + escHtml(det.mac||'—') + '</span>' +
-      '<span class="info-k">Firmware</span><span class="info-v">'         + escHtml(det.firmware||'—') + '</span>' +
-      '<span class="info-k">Operator</span><span class="info-v">'         + escHtml(det.operator||'—') + '</span>' +
+      '<span class="info-k">Mobile IP</span><span class="info-v mono">'   + esc(ip||'—') + '</span>' +
+      '<span class="info-k">IMEI</span><span class="info-v mono">'        + esc(det.imei||'—') + '</span>' +
+      '<span class="info-k">MAC</span><span class="info-v mono">'         + esc(det.mac||'—') + '</span>' +
+      '<span class="info-k">Firmware</span><span class="info-v">'         + esc(det.firmware||'—') + '</span>' +
+      '<span class="info-k">Operator</span><span class="info-v">'         + esc(det.operator||'—') + '</span>' +
       '<span class="info-k">Signal</span><span class="info-v">'           + (det.signal ? det.signal+' dBm' : '—') + '</span>' +
-      '<span class="info-k">Tags</span><span class="info-v">'             + ((det.tags||[]).map(t=>escHtml(t.name)).join(', ')||'None') + '</span>' +
-      '<span class="info-k">Configuration</span><span class="info-v">'    +
+      '<span class="info-k">Tags</span><span class="info-v">'             + ((det.tags||[]).map(t=>esc(t.name)).join(', ')||'None') + '</span>' +
+      '<span class="info-k">Configuration</span><span class="info-v">'   +
         (S.configuredSerials.has(d.serial)
-          ? '<span class="pill pill-orange">🔒 ' + escHtml(S.deviceCtrlType[d.serial]||'Configured') + '</span>'
-          : '<span class="pill pill-blue">Not yet configured</span>') +
+          ? '<span class="pill pill-orange">🔒 ' + esc(S.deviceCtrlTag[d.serial]||'Configured') + '</span>'
+          : '<span class="pill pill-green">Not yet configured</span>') +
       '</span>' +
       '</div>';
     log('Device info loaded for ' + d.name, 'ok');
   } catch(e) {
-    document.getElementById('devinfo-body').innerHTML = '<div style="color:var(--red);font-size:12px">Error: ' + escHtml(e.message) + '</div>';
+    document.getElementById('devinfo-body').innerHTML = '<div style="color:var(--red);font-size:12px">Error: ' + esc(e.message) + '</div>';
   }
 }
 
