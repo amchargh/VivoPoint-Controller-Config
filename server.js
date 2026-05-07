@@ -176,6 +176,30 @@ app.post("/api/devices/:id/tags", async (req, res) => {
   }
 });
 
+// ── Files (for UUID downloader) ───────────────────────────────────────────────
+app.get("/api/files", async (req, res) => {
+  try {
+    const r = await fetch(`${RMS_BASE}/files`, { headers: rmsHeaders() });
+    const data = await r.json();
+    res.status(r.status).json(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get("/api/files/:id/download", async (req, res) => {
+  try {
+    const r = await fetch(`${RMS_BASE}/files/${req.params.id}/download`, {
+      headers: rmsHeaders(),
+    });
+    // Return raw text — the UUID file is plain text
+    const text = await r.text();
+    res.status(r.status).send(text);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
+});
+
 // ── Catch-all → SPA ───────────────────────────────────────────────────────────
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));

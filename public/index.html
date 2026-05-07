@@ -315,27 +315,39 @@ body{font-family:var(--font);background:var(--surface);color:var(--text);font-si
                 <div style="font-size:11px;color:var(--text-3)">Mobile IP: <span id="tagged-mobile-ip" style="font-family:var(--mono)">—</span></div>
               </div>
 
-              <!-- UUID tab -->
+              <!-- UUID tab — only for Walchem, Chemtrol, BECs -->
               <div class="action-tab-panel" id="tagged-uuid">
-                <div class="banner banner-amber" style="margin-bottom:14px">
-                  <span class="banner-icon">⚠️</span>
-                  <div>Sensor labels changed from the default will not be translated.</div>
+                <div id="uuid-not-applicable" style="display:none" class="banner banner-amber">
+                  <span class="banner-icon">ℹ️</span>
+                  <div>UUID / Device ID is not applicable for this controller type.</div>
                 </div>
-                <div class="grid-2" style="margin-bottom:10px">
-                  <div class="field">
-                    <label>Body of water</label>
-                    <select id="tagged-bow" onchange="document.getElementById('tagged-uuid-val').value=''">
-                      <option value="">— select —</option>
-                      <option>BW1</option><option>BW2</option><option>BW3</option><option>BW4</option><option>BW5</option>
-                    </select>
-                  </div>
-                  <div class="field">
-                    <label>Device UUID</label>
-                    <div style="display:flex;gap:6px">
-                      <input type="text" id="tagged-uuid-val" readonly class="mono" placeholder="Click Get UUID →" style="flex:1">
-                      <button class="btn btn-primary" onclick="getTaggedUuid()">Get UUID</button>
-                      <button class="btn" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById('tagged-uuid-val').value)">📋</button>
+                <div id="uuid-applicable">
+                  <div class="banner banner-blue" style="margin-bottom:14px">
+                    <span class="banner-icon">🆔</span>
+                    <div>
+                      <div class="banner-title">UUID Downloader</div>
+                      <div class="banner-sub">Runs the RMS "UUID Downloader" task group on this device, then reads the <code style="font-family:var(--mono);font-size:10px">device_id_{BW}_{serial}_*</code> file from RMS Files to extract the UUID for VivoPoint.</div>
                     </div>
+                  </div>
+                  <div class="grid-2" style="margin-bottom:14px">
+                    <div class="field">
+                      <label>Body of water</label>
+                      <select id="tagged-bow" onchange="document.getElementById('tagged-uuid-val').value='';document.getElementById('uuid-status').textContent=''">
+                        <option value="">— select —</option>
+                        <option>BW1</option><option>BW2</option><option>BW3</option><option>BW4</option><option>BW5</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label>Device UUID</label>
+                      <div style="display:flex;gap:6px">
+                        <input type="text" id="tagged-uuid-val" readonly class="mono" placeholder="Select BW then click Get UUID" style="flex:1">
+                        <button class="btn" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.getElementById('tagged-uuid-val').value)" title="Copy UUID">📋</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <button class="btn btn-primary btn-lg" id="btn-get-uuid" onclick="runUuidDownloader()">🆔 Get Device UUID</button>
+                    <span id="uuid-status" style="font-size:11px;color:var(--text-2)"></span>
                   </div>
                 </div>
               </div>
@@ -965,6 +977,18 @@ function openTaggedMode(d) {
 
   buildTaggedUrl();
 
+  // Show/hide UUID tab — only Walchem SingleBody, Walchem DualBody, Chemtrol, BECs use UUID
+  const uuidApplicable = UUID_CTRL_TYPES.includes(ctrlType);
+  const uuidTab = document.querySelector('#mode-tagged .action-tab[onclick*="tagged-uuid"]');
+  if (uuidTab) uuidTab.style.display = uuidApplicable ? '' : 'none';
+  document.getElementById('uuid-not-applicable').style.display = uuidApplicable ? 'none' : '';
+  document.getElementById('uuid-applicable').style.display     = uuidApplicable ? '' : 'none';
+  // Clear previous UUID state
+  document.getElementById('tagged-uuid-val').value = '';
+  document.getElementById('tagged-bow').value = '';
+  const uuidSt = document.getElementById('uuid-status');
+  if (uuidSt) uuidSt.textContent = '';
+
   // Show tagged panel
   document.getElementById('action-panel-wrap').style.display = '';
   document.getElementById('mode-tagged').style.display = '';
@@ -1114,11 +1138,131 @@ function copyUntaggedUrl() {
   log('Copied URL: ' + url, 'info');
 }
 
-function getTaggedUuid() {
+// Controller types that use UUID/Device ID on VivoPoint
+const UUID_CTRL_TYPES = ['Walchem SingleBody', 'Walchem DualBody', 'Chemtrol', 'BECs'];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UUID Downloader — mirrors Python get_device_uuid() + download_uuid_from_rms_files()
+// 1. Find task group with "uuid" + "download" in name
+// 2. Execute it on the device
+// 3. Poll /api/files for device_id_{BW#}_{serial}_* file
+// 4. Download file, regex-extract UUID
+// ─────────────────────────────────────────────────────────────────────────────
+async function runUuidDownloader() {
+  const d   = S.selectedDevice;
   const bow = document.getElementById('tagged-bow').value;
-  if (!bow || !S.selectedDevice) return;
-  document.getElementById('tagged-uuid-val').value = S.selectedDevice.id || '—';
-  log('UUID set for ' + bow + ': ' + S.selectedDevice.id, 'ok');
+  if (!bow)  { log('Select a body of water first', 'warn'); return; }
+  if (!d)    { log('No device selected', 'warn'); return; }
+
+  const btn    = document.getElementById('btn-get-uuid');
+  const status = document.getElementById('uuid-status');
+  const uuidEl = document.getElementById('tagged-uuid-val');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">⏳</span> Running UUID Downloader...';
+  uuidEl.value = '';
+  status.textContent = '';
+
+  const uuidStatus = (msg, cls) => {
+    status.textContent = msg;
+    status.style.color = cls === 'ok' ? 'var(--teal)' : cls === 'err' ? 'var(--red)' : 'var(--amber)';
+    log('[UUID] ' + msg, cls === 'ok' ? 'ok' : cls === 'err' ? 'err' : 'warn');
+  };
+
+  try {
+    // Step 1: Find UUID Downloader task group
+    uuidStatus('Searching for UUID Downloader task group...');
+    const tgData = await api('/task-groups');
+    const groups = tgData.data || [];
+    const uuidGroup = groups.find(g => {
+      const n = (g.name||'').toLowerCase();
+      return n.includes('uuid') && n.includes('download');
+    });
+    if (!uuidGroup) throw new Error('UUID Downloader task group not found in RMS. Check that it exists and contains "uuid" and "download" in the name.');
+    log('[UUID] Found task group: "' + uuidGroup.name + '" (id: ' + uuidGroup.id + ')', 'ok');
+
+    // Step 2: Execute the UUID Downloader task group on the device
+    uuidStatus('Executing UUID Downloader task on device...');
+    const execRes = await api('/devices/' + d.id + '/configure', {
+      method: 'POST',
+      body: { task_group_id: uuidGroup.id, device_serial: d.serial }
+    });
+    if (execRes.error) throw new Error(execRes.error);
+    log('[UUID] Task group executed successfully', 'ok');
+
+    // Step 3: Poll RMS Files for device_id_{BW#}_{serial}_* (up to 6 retries, 2s apart)
+    const bwNum  = bow.replace('BW', '');
+    const serial = d.serial || '';
+    const patterns = [
+      'device_id_' + bwNum + '_' + serial,
+      'device_id_' + bwNum + '_',
+    ];
+
+    let found = null;
+    for (let retry = 0; retry < 6; retry++) {
+      uuidStatus('Waiting for UUID file... (' + (retry+1) + '/6)');
+      await new Promise(r => setTimeout(r, 2000));
+
+      const filesRes = await api('/files');
+      const files = filesRes.data || [];
+      log('[UUID] RMS Files: ' + files.length + ' files found', 'info');
+
+      // Find best matching file (most recent wins)
+      let candidate = null;
+      for (const pat of patterns) {
+        const matches = files.filter(f => (f.name||'').startsWith(pat));
+        if (matches.length) {
+          matches.sort((a,b) => (b.created_at||'').localeCompare(a.created_at||''));
+          candidate = matches[0];
+          break;
+        }
+      }
+
+      if (candidate) {
+        log('[UUID] Found file: ' + candidate.name, 'ok');
+        uuidStatus('Downloading UUID file: ' + candidate.name);
+
+        // Step 4: Download file and extract UUID
+        const dlRes = await fetch('/api/files/' + candidate.id + '/download');
+        let text = await dlRes.text();
+        // Clean BOM and null chars (same as Python)
+        text = text.replace(/\ufeff/g,'').replace(/\x00/g,'');
+        const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+        const uuidRe = /([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i;
+        let extractedUuid = null;
+        for (const line of lines) {
+          const m = line.trim().match(uuidRe);
+          if (m) { extractedUuid = m[1]; break; }
+        }
+
+        if (extractedUuid) {
+          uuidEl.value = extractedUuid;
+          uuidStatus('✓ UUID retrieved for ' + bow, 'ok');
+          log('[UUID] Extracted UUID: ' + extractedUuid, 'ok');
+          found = extractedUuid;
+          break;
+        } else {
+          log('[UUID] File downloaded but no UUID pattern found. Content: ' + text.slice(0,80), 'warn');
+        }
+      } else {
+        const devIdFiles = (filesRes.data||[]).filter(f=>(f.name||'').startsWith('device_id_')).map(f=>f.name);
+        if (devIdFiles.length) log('[UUID] Available device_id files: ' + devIdFiles.slice(0,5).join(', '), 'info');
+      }
+    }
+
+    if (!found) {
+      uuidEl.value = 'Check RMS Files: device_id_' + bwNum + '_' + serial + '_*';
+      uuidStatus('UUID file not found after retries — check RMS Files manually', 'warn');
+      log('[UUID] Task ran but file not found after 6 retries. Check RMS Files for device_id_' + bwNum + '_' + serial + '_*', 'warn');
+    }
+
+  } catch(e) {
+    uuidStatus('Error: ' + e.message, 'err');
+    log('[UUID] Failed: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🆔 Get Device UUID';
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
