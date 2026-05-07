@@ -1186,13 +1186,13 @@ async function runUuidDownloader() {
     await getFirstTaskAndExecute(d.id, uuidGroup.id, '[UUID] ');
     log('[UUID] Task group executed successfully', 'ok');
 
-    // Step 3: Poll RMS Files for device_id_{BW#}_{serial}_* (up to 6 retries, 2s apart)
-    const bwNum  = bow.replace('BW', '');
-    const serial = d.serial || '';
-    const patterns = [
-      'device_id_' + bwNum + '_' + serial,
-      'device_id_' + bwNum + '_',
-    ];
+    // Step 3: Poll RMS Files — files are named device_id_bw{n}_{serial}_{date}.txt
+    // Primary match: device_id_bw{n}_{serial}  (exact device, most recent)
+    // Fallback match: device_id_bw{n}_          (any device for this BW, most recent)
+    const bwNum      = bow.replace('BW','').toLowerCase(); // 'BW1' -> '1'
+    const serial     = d.serial || '';
+    const bwSerial   = 'device_id_bw' + bwNum + '_' + serial; // e.g. device_id_bw1_6007379881
+    const bwFallback = 'device_id_bw' + bwNum + '_';          // e.g. device_id_bw1_
 
     let found = null;
     for (let retry = 0; retry < 6; retry++) {
@@ -1201,27 +1201,29 @@ async function runUuidDownloader() {
 
       const filesRes = await api('/files');
       const files = filesRes.data || [];
-      log('[UUID] RMS Files: ' + files.length + ' files found', 'info');
 
-      // Find best matching file (most recent wins)
+      // Log all device_id files so mismatches are visible
+      const allDevIdFiles = files.filter(f => (f.name||'').startsWith('device_id_'));
+      if (allDevIdFiles.length) log('[UUID] Available device_id files: ' + allDevIdFiles.map(f=>f.name).join(', '), 'info');
+
+      // Try serial-specific match first, then BW-only fallback
       let candidate = null;
-      for (const pat of patterns) {
+      for (const pat of [bwSerial, bwFallback]) {
         const matches = files.filter(f => (f.name||'').startsWith(pat));
         if (matches.length) {
           matches.sort((a,b) => (b.created_at||'').localeCompare(a.created_at||''));
           candidate = matches[0];
+          log('[UUID] Matched file (' + pat + '*): ' + candidate.name, 'ok');
           break;
         }
       }
 
       if (candidate) {
-        log('[UUID] Found file: ' + candidate.name, 'ok');
-        uuidStatus('Downloading UUID file: ' + candidate.name);
+        uuidStatus('Downloading: ' + candidate.name);
 
-        // Step 4: Download file and extract UUID
+        // Step 4: Download and extract UUID
         const dlRes = await fetch('/api/files/' + candidate.id + '/download');
         let text = await dlRes.text();
-        // Clean BOM and null chars (same as Python)
         text = text.replace(/\ufeff/g,'').replace(/\x00/g,'');
         const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
         const uuidRe = /([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i;
@@ -1234,22 +1236,21 @@ async function runUuidDownloader() {
         if (extractedUuid) {
           uuidEl.value = extractedUuid;
           uuidStatus('✓ UUID retrieved for ' + bow, 'ok');
-          log('[UUID] Extracted UUID: ' + extractedUuid, 'ok');
+          log('[UUID] Extracted UUID: ' + extractedUuid + ' from ' + candidate.name, 'ok');
           found = extractedUuid;
           break;
         } else {
-          log('[UUID] File downloaded but no UUID pattern found. Content: ' + text.slice(0,80), 'warn');
+          log('[UUID] File downloaded but no UUID found. Content: ' + text.slice(0,80), 'warn');
         }
       } else {
-        const devIdFiles = (filesRes.data||[]).filter(f=>(f.name||'').startsWith('device_id_')).map(f=>f.name);
-        if (devIdFiles.length) log('[UUID] Available device_id files: ' + devIdFiles.slice(0,5).join(', '), 'info');
+        log('[UUID] Retry ' + (retry+1) + '/6 — no file yet matching ' + bwSerial + '_*', 'warn');
       }
     }
 
     if (!found) {
-      uuidEl.value = 'Check RMS Files: device_id_' + bwNum + '_' + serial + '_*';
+      uuidEl.value = 'Check RMS Files: ' + bwSerial + '_*';
       uuidStatus('UUID file not found after retries — check RMS Files manually', 'warn');
-      log('[UUID] Task ran but file not found after 6 retries. Check RMS Files for device_id_' + bwNum + '_' + serial + '_*', 'warn');
+      log('[UUID] Not found after 6 retries. Expected: ' + bwSerial + '_*', 'warn');
     }
 
   } catch(e) {
