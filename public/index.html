@@ -1170,7 +1170,39 @@ async function runUuidDownloader() {
   };
 
   try {
-    // Step 1: Find UUID Downloader task group
+    const bwNum    = bow.replace('BW','').toLowerCase();
+    const serial   = d.serial || '';
+    const bwSerial = 'device_id_bw' + bwNum + '_' + serial;
+
+    // Step 1: Check if file already exists in RMS — skip task if it does
+    uuidStatus('Checking RMS files...');
+    const existingRes = await api('/files');
+    const existingFiles = existingRes.data || [];
+    const existingMatch = existingFiles
+      .filter(f => (f.name||'').startsWith(bwSerial))
+      .sort((a,b) => (b.created_at||'').localeCompare(a.created_at||''))[0];
+
+    if (existingMatch) {
+      log('[UUID] File already in RMS: ' + existingMatch.name + ' — skipping task', 'ok');
+      uuidStatus('File found — downloading...');
+      const dlRes = await fetch('/api/files/' + existingMatch.id + '/download');
+      let text = await dlRes.text();
+      text = text.replace(/\ufeff/g,'').replace(/\x00/g,'');
+      const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+      const uuidRe = /([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})/i;
+      for (const line of lines) {
+        const m = line.trim().match(uuidRe);
+        if (m) {
+          uuidEl.value = m[1];
+          uuidStatus('✓ UUID retrieved for ' + bow + ' (cached)', 'ok');
+          log('[UUID] Extracted UUID: ' + m[1] + ' from ' + existingMatch.name, 'ok');
+          return;
+        }
+      }
+      log('[UUID] Cached file had no UUID — re-running task', 'warn');
+    }
+
+    // Step 2: File not found — find UUID Downloader task group and run it
     uuidStatus('Searching for UUID Downloader task group...');
     const tgData = await api('/task-groups');
     const groups = tgData.data || [];
@@ -1178,20 +1210,12 @@ async function runUuidDownloader() {
       const n = (g.name||'').toLowerCase();
       return n.includes('uuid') && n.includes('download');
     });
-    if (!uuidGroup) throw new Error('UUID Downloader task group not found in RMS. Check that it exists and contains "uuid" and "download" in the name.');
+    if (!uuidGroup) throw new Error('UUID Downloader task group not found in RMS.');
     log('[UUID] Found task group: "' + uuidGroup.name + '" (id: ' + uuidGroup.id + ')', 'ok');
 
-    // Step 2: Get first task then execute — mirrors Python exactly, no add-device step
     uuidStatus('Executing UUID Downloader task on device...');
     await getFirstTaskAndExecute(d.id, uuidGroup.id, '[UUID] ');
     log('[UUID] Task group executed successfully', 'ok');
-
-    // Step 3: Poll RMS Files — strict serial match only
-    // Files are named device_id_bw{n}_{serial}_{date}.txt
-    // Never fall back to BW-only match — that picks up other devices' stale files
-    const bwNum    = bow.replace('BW','').toLowerCase(); // 'BW1' -> '1'
-    const serial   = d.serial || '';
-    const bwSerial = 'device_id_bw' + bwNum + '_' + serial; // e.g. device_id_bw1_6006262151
     log('[UUID] Looking for file matching: ' + bwSerial + '_*', 'info');
 
     let found = null;
