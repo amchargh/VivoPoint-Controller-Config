@@ -661,23 +661,33 @@ async function api(path, opts) {
 // Init
 // ─────────────────────────────────────────────────────────────────────────────
 async function init() {
+  const dot = document.getElementById('conn-dot');
+  const lbl = document.getElementById('conn-label');
   try {
+    // Fast check — just confirms server is up and token is set
     const d = await api('/health');
-    const dot = document.getElementById('conn-dot');
-    const lbl = document.getElementById('conn-label');
     if (d.ok && d.token_set) {
       dot.classList.add('live');
       lbl.textContent = 'RMS connected';
-      log('RMS API token verified', 'ok');
+      log('Backend ready — token set', 'ok');
+      // Fire discover immediately — don't wait for ping
       discoverProfiles();
+      // Verify RMS reachability in background (non-blocking)
+      api('/ping').then(p => {
+        if (!p.ok) {
+          lbl.textContent = 'RMS unreachable';
+          dot.classList.remove('live'); dot.classList.add('err');
+          log('RMS ping failed: ' + (p.error||'unknown'), 'err');
+        }
+      }).catch(() => {});
     } else {
       dot.classList.add('err'); lbl.textContent = 'Token missing';
       log('Set RMS_API_TOKEN in Railway environment variables', 'err');
       document.getElementById('disc-status').innerHTML = '<span style="color:var(--red)">✗ Token not set</span>';
     }
   } catch(e) {
-    document.getElementById('conn-dot').classList.add('err');
-    document.getElementById('conn-label').textContent = 'Offline';
+    dot.classList.add('err');
+    lbl.textContent = 'Offline';
     log('Backend unreachable: ' + e.message, 'err');
   }
 }

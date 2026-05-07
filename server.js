@@ -44,16 +44,19 @@ async function rmsPost(path, body) {
   return json;
 }
 
-// ── Health ────────────────────────────────────────────────────────────────────
-app.get("/api/health", async (req, res) => {
-  const t = token();
-  if (!t) return res.json({ ok: false, token_set: false, error: "RMS_API_TOKEN not set" });
+// ── Health — instant, no RMS call ────────────────────────────────────────────
+app.get("/api/health", (req, res) => {
+  res.json({ ok: true, token_set: !!token() });
+});
+
+// ── Ping — actually tests RMS connectivity ────────────────────────────────────
+app.get("/api/ping", async (req, res) => {
+  if (!token()) return res.json({ ok: false, error: "RMS_API_TOKEN not set" });
   try {
-    // Ping RMS with a lightweight call to confirm the token actually works
     await rmsGet("/devices?limit=1");
-    res.json({ ok: true, token_set: true });
+    res.json({ ok: true });
   } catch (e) {
-    res.json({ ok: false, token_set: true, error: e.message });
+    res.json({ ok: false, error: e.message });
   }
 });
 
