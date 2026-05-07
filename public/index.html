@@ -187,10 +187,14 @@ body{font-family:var(--font);background:var(--surface);color:var(--text);font-si
     <div class="logo"><span>VIVO</span>POINT</div>
     <div class="topbar-sep"></div>
     <span class="topbar-title">Dynamic Controller Configuration</span>
-    <div class="topbar-right">
+    <div class="topbar-right" style="display:flex;align-items:center;gap:12px">
       <div class="conn-badge">
         <div class="conn-dot" id="conn-dot"></div>
         <span id="conn-label">Connecting...</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,0.55)">
+        <span id="topbar-user"></span>
+        <button onclick="doLogout()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);padding:3px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:var(--font)">Sign out</button>
       </div>
     </div>
   </header>
@@ -201,6 +205,7 @@ body{font-family:var(--font);background:var(--surface);color:var(--text);font-si
     <div class="nav-item" onclick="showPanel('devinfo',this)">📋 &nbsp;Device Info</div>
     <div class="sidebar-label" style="margin-top:8px">System</div>
     <div class="nav-item" onclick="showPanel('log',this)">📟 &nbsp;Activity Log</div>
+    <div class="nav-item" id="admin-nav-item" style="display:none" onclick="showPanel('admin',this)">🔐 &nbsp;Admin</div>
   </nav>
 
   <main class="main">
@@ -495,15 +500,64 @@ body{font-family:var(--font);background:var(--surface);color:var(--text);font-si
       </div>
     </div>
 
+    <!-- ════════════════════════════════════════════════════════════
+         ADMIN PANEL
+    ═════════════════════════════════════════════════════════════ -->
+    <div id="panel-admin" style="display:none;flex-direction:column;gap:16px">
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">User Management</span>
+          <button class="btn btn-primary" onclick="showCreateUser()">➕ Create user</button>
+        </div>
+        <div class="card-body" id="admin-users-body">
+          <div style="font-size:12px;color:var(--text-3)">Loading...</div>
+        </div>
+      </div>
+
+      <!-- Create user form (hidden by default) -->
+      <div class="card" id="create-user-card" style="display:none">
+        <div class="card-header">
+          <span class="card-title">Create new user</span>
+          <button class="btn" onclick="hideCreateUser()">✕ Cancel</button>
+        </div>
+        <div class="card-body">
+          <div class="grid-2" style="margin-bottom:12px">
+            <div class="field">
+              <label>Full name</label>
+              <input type="text" id="new-name" placeholder="Jane Smith">
+            </div>
+            <div class="field">
+              <label>Email address</label>
+              <input type="email" id="new-email" placeholder="jane@vivoaquatics.com">
+            </div>
+          </div>
+          <div class="grid-2" style="margin-bottom:12px">
+            <div class="field">
+              <label>Password</label>
+              <input type="text" id="new-password" placeholder="Temporary password">
+            </div>
+            <div class="field">
+              <label>Role</label>
+              <select id="new-role">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <div id="create-user-error" style="font-size:12px;color:var(--red);margin-bottom:8px;display:none"></div>
+          <button class="btn btn-success" onclick="createUser()">✓ Create user</button>
+        </div>
+      </div>
+
+    </div>
+
   </main>
 </div>
 
 <script>
 // ═════════════════════════════════════════════════════════════════════════════
 // CONTROLLER PATTERNS
-// Mirrors the Python logic exactly.
-// Each entry: { keywords: required words that ALL must appear in task group name }
-// Walchem SingleBody excludes groups whose name also contains "dualbody"/"dual body"
 // ═════════════════════════════════════════════════════════════════════════════
 const CTRL_PATTERNS = {
   "ABB":               { keywords: ["abb", "acs580", "vfd", "full", "profile"],          exclude: [] },
@@ -514,9 +568,11 @@ const CTRL_PATTERNS = {
   "Prominent":         { keywords: ["prominent"],                                         exclude: [] },
 };
 
-// Prominent devices only need URL/UUID — no task group push
 const PROMINENT_ONLY_URL = true;
 const PROMINENT_TYPE = "Prominent";
+
+// Controller types that support UUID — ABB now included
+const UUID_CTRL_TYPES = ['Walchem SingleBody', 'Walchem DualBody', 'Chemtrol', 'BECs', 'ABB'];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // IP ranges (from Python source)
@@ -609,20 +665,122 @@ function setProgress(on) {
 }
 
 function showPanel(id, navEl) {
-  ['config','devinfo','log'].forEach(p => {
+  ['config','devinfo','log','admin'].forEach(p => {
     const el = document.getElementById('panel-'+p);
     if (!el) return;
     el.style.display = (p===id) ? (p==='config' ? 'block' : 'flex') : 'none';
   });
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if (navEl) navEl.classList.add('active');
+  if (id === 'admin') loadAdminUsers();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Auth
+// ─────────────────────────────────────────────────────────────────────────────
+let CURRENT_USER = null;
+
+async function doLogout() {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  window.location.replace('/login');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Admin portal
+// ─────────────────────────────────────────────────────────────────────────────
+function showCreateUser() {
+  document.getElementById('create-user-card').style.display = '';
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-email').value = '';
+  document.getElementById('new-password').value = '';
+  document.getElementById('new-role').value = 'user';
+  document.getElementById('create-user-error').style.display = 'none';
+}
+function hideCreateUser() {
+  document.getElementById('create-user-card').style.display = 'none';
+}
+
+async function loadAdminUsers() {
+  const body = document.getElementById('admin-users-body');
+  body.innerHTML = '<div style="font-size:12px;color:var(--text-3)">Loading...</div>';
+  try {
+    const data = await api('/admin/users');
+    const users = data.users || [];
+    if (!users.length) { body.innerHTML = '<div style="font-size:12px;color:var(--text-3)">No users yet.</div>'; return; }
+    body.innerHTML = '';
+    const table = document.createElement('table');
+    table.style.cssText = 'width:100%;border-collapse:collapse;font-size:12px';
+    table.innerHTML = '<thead><tr style="border-bottom:1px solid var(--border-light)">' +
+      '<th style="text-align:left;padding:6px 8px;color:var(--text-3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.4px">Name</th>' +
+      '<th style="text-align:left;padding:6px 8px;color:var(--text-3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.4px">Email</th>' +
+      '<th style="text-align:left;padding:6px 8px;color:var(--text-3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.4px">Role</th>' +
+      '<th style="text-align:left;padding:6px 8px;color:var(--text-3);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.4px">Created</th>' +
+      '<th style="padding:6px 8px"></th></tr></thead><tbody id="admin-users-tbody"></tbody>';
+    body.appendChild(table);
+    const tbody = document.getElementById('admin-users-tbody');
+    users.forEach(u => {
+      const isSelf = CURRENT_USER && u.email === CURRENT_USER.email;
+      const tr = document.createElement('tr');
+      tr.style.cssText = 'border-bottom:1px solid var(--border-light)';
+      tr.innerHTML =
+        '<td style="padding:8px 8px;font-weight:500">' + esc(u.name) + (isSelf ? ' <span class="pill pill-blue" style="font-size:10px">you</span>' : '') + '</td>' +
+        '<td style="padding:8px 8px;color:var(--text-2)">' + esc(u.email) + '</td>' +
+        '<td style="padding:8px 8px"><span class="pill ' + (u.role==='admin'?'pill-orange':'pill-blue') + '">' + u.role + '</span></td>' +
+        '<td style="padding:8px 8px;color:var(--text-3);font-size:11px">' + new Date(u.created_at).toLocaleDateString() + '</td>' +
+        '<td style="padding:8px 8px;text-align:right">' +
+          '<div style="display:flex;gap:6px;justify-content:flex-end">' +
+          '<button class="btn" style="height:26px;padding:0 10px;font-size:11px" onclick="resetPassword(' + u.id + ',\'' + esc(u.name) + '\')">🔑 Reset pw</button>' +
+          (!isSelf ? '<button class="btn" style="height:26px;padding:0 10px;font-size:11px;color:var(--red);border-color:var(--red)" onclick="deleteUser(' + u.id + ',\'' + esc(u.name) + '\')">✕ Delete</button>' : '') +
+          '</div></td>';
+      tbody.appendChild(tr);
+    });
+  } catch(e) {
+    body.innerHTML = '<div style="color:var(--red);font-size:12px">Error loading users: ' + esc(e.message) + '</div>';
+  }
+}
+
+async function createUser() {
+  const name = document.getElementById('new-name').value.trim();
+  const email = document.getElementById('new-email').value.trim();
+  const password = document.getElementById('new-password').value;
+  const role = document.getElementById('new-role').value;
+  const errEl = document.getElementById('create-user-error');
+  errEl.style.display = 'none';
+  if (!name || !email || !password) { errEl.textContent = 'All fields required.'; errEl.style.display = ''; return; }
+  try {
+    await api('/admin/users', { method: 'POST', body: { name, email, password, role } });
+    hideCreateUser();
+    loadAdminUsers();
+    log('User created: ' + email, 'ok');
+  } catch(e) {
+    errEl.textContent = e.message; errEl.style.display = '';
+  }
+}
+
+async function resetPassword(id, name) {
+  const pw = prompt('New password for ' + name + ':');
+  if (!pw) return;
+  if (pw.length < 6) { alert('Password must be at least 6 characters.'); return; }
+  try {
+    await api('/admin/users/' + id + '/password', { method: 'PATCH', body: { password: pw } });
+    log('Password reset for user id ' + id, 'ok');
+    alert('Password updated for ' + name);
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+async function deleteUser(id, name) {
+  if (!confirm('Delete user ' + name + '? This cannot be undone.')) return;
+  try {
+    await api('/admin/users/' + id, { method: 'DELETE' });
+    log('Deleted user: ' + name, 'ok');
+    loadAdminUsers();
+  } catch(e) { alert('Error: ' + e.message); }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Action tab switcher (inside the device action panel)
 // ─────────────────────────────────────────────────────────────────────────────
 function showActionTab(id, tabEl) {
-  // Find sibling panels and tabs
   const clickedTab = tabEl || document.querySelector('.action-tab.active');
   const panelEl = document.getElementById(id);
   if (!panelEl) return;
@@ -631,7 +789,6 @@ function showActionTab(id, tabEl) {
     container.querySelectorAll('.action-tab-panel').forEach(p => p.classList.remove('active'));
   }
   panelEl.classList.add('active');
-  // Tabs
   if (tabEl) {
     const tabContainer = tabEl.closest('.action-tabs');
     if (tabContainer) tabContainer.querySelectorAll('.action-tab').forEach(t => t.classList.remove('active'));
@@ -640,7 +797,7 @@ function showActionTab(id, tabEl) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// API proxy
+// API proxy — redirects to /login on 401
 // ─────────────────────────────────────────────────────────────────────────────
 async function api(path, opts) {
   opts = opts || {};
@@ -649,17 +806,32 @@ async function api(path, opts) {
     headers: {'Content-Type':'application/json'},
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
+  if (r.status === 401) { window.location.replace('/login'); return; }
   const text = await r.text();
   let json;
   try { json = JSON.parse(text); } catch(e) { throw new Error('Non-JSON: ' + text.slice(0,120)); }
-  if (!r.ok) throw new Error(json.error || 'HTTP ' + r.status);
+  if (!r.ok && path !== '/health') throw new Error(json.error || 'HTTP ' + r.status);
   return json;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Init
+// Init — check auth first, then connect
 // ─────────────────────────────────────────────────────────────────────────────
 async function init() {
+  // Check session — redirect to login if not authenticated
+  try {
+    const me = await fetch('/api/auth/me');
+    if (me.status === 401) { window.location.replace('/login'); return; }
+    const meData = await me.json();
+    CURRENT_USER = meData.user;
+    document.getElementById('topbar-user').textContent = CURRENT_USER.name;
+    if (CURRENT_USER.role === 'admin') {
+      document.getElementById('admin-nav-item').style.display = '';
+    }
+  } catch(e) {
+    window.location.replace('/login'); return;
+  }
+
   try {
     const d = await api('/health');
     const dot = document.getElementById('conn-dot');
@@ -1137,9 +1309,6 @@ function copyUntaggedUrl() {
   navigator.clipboard && navigator.clipboard.writeText(url);
   log('Copied URL: ' + url, 'info');
 }
-
-// Controller types that use UUID/Device ID on VivoPoint
-const UUID_CTRL_TYPES = ['Walchem SingleBody', 'Walchem DualBody', 'Chemtrol', 'BECs'];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // UUID Downloader — mirrors Python get_device_uuid() + download_uuid_from_rms_files()
