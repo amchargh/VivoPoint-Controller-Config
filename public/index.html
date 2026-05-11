@@ -1162,15 +1162,28 @@ function openTaggedMode(d) {
 
   buildTaggedUrl();
 
-  // Show/hide UUID tab — only Walchem SingleBody, Walchem DualBody, Chemtrol, BECs use UUID
+  // Show/hide UUID tab based on controller type
   const uuidApplicable = UUID_CTRL_TYPES.includes(ctrlType);
   const uuidTab = document.querySelector('#mode-tagged .action-tab[onclick*="tagged-uuid"]');
   if (uuidTab) uuidTab.style.display = uuidApplicable ? '' : 'none';
   document.getElementById('uuid-not-applicable').style.display = uuidApplicable ? 'none' : '';
   document.getElementById('uuid-applicable').style.display     = uuidApplicable ? '' : 'none';
+
+  // Limit BW dropdown options per controller type
+  // Walchem DualBody → BW1, BW2 only
+  // ABB              → BW1, BW2, BW3 only
+  // All others       → BW1 through BW5
+  const BW_LIMITS = {
+    'Walchem DualBody': ['BW1','BW2'],
+    'ABB':              ['BW1','BW2','BW3'],
+  };
+  const bwOptions = BW_LIMITS[ctrlType] || ['BW1','BW2','BW3','BW4','BW5'];
+  const bowSel = document.getElementById('tagged-bow');
+  bowSel.innerHTML = '<option value="">\u2014 select \u2014</option>' +
+    bwOptions.map(bw => '<option>' + bw + '</option>').join('');
+
   // Clear previous UUID state
   document.getElementById('tagged-uuid-val').value = '';
-  document.getElementById('tagged-bow').value = '';
   const uuidSt = document.getElementById('uuid-status');
   if (uuidSt) uuidSt.textContent = '';
 
