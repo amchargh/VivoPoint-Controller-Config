@@ -638,6 +638,7 @@ const S = {
   selectedDevice: null,
   configuredSerials: new Set(),
   deviceCtrlTag: {},        // serial -> tag name string (from RMS tag)
+  showAllDevices: false,
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -996,6 +997,7 @@ async function listDevices() {
   try {
     const data = await api('/devices');
     S.devices = data.data || [];
+    S.showAllDevices = false;
 
     // Pre-mark configured status from tags that come with the list
     S.devices.forEach(d => {
@@ -1031,8 +1033,15 @@ function renderDeviceList(list) {
     container.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:8px 0">No devices found.</div>';
     return;
   }
+
+  const LIMIT = 10;
+  const q = document.getElementById('device-search').value;
+  const showAll = q || S.showAllDevices;
+  const visible = showAll ? list.slice(0, 1000) : list.slice(0, LIMIT);
+  const hiddenCount = list.length - visible.length;
+
   container.innerHTML = '';
-  list.slice(0, 100).forEach(d => {
+  visible.forEach(d => {
     const tagged = S.configuredSerials.has(d.serial);
     const isSelected = S.selectedDevice && S.selectedDevice.id === d.id;
     const online = d.status === 1;
@@ -1069,6 +1078,19 @@ function renderDeviceList(list) {
     row.addEventListener('click', () => selectDevice(d.id));
     container.appendChild(row);
   });
+
+  // Show all / Show less toggle
+  if (hiddenCount > 0) {
+    const toggle = document.createElement('div');
+    toggle.style.cssText = 'text-align:center;padding:8px 0';
+    toggle.innerHTML = '<button class="btn" style="width:100%;justify-content:center;color:var(--blue);border-color:var(--blue)" onclick="S.showAllDevices=true;filterDevices()">Show all ' + list.length + ' devices (' + hiddenCount + ' more)</button>';
+    container.appendChild(toggle);
+  } else if (showAll && list.length > LIMIT && !q) {
+    const toggle = document.createElement('div');
+    toggle.style.cssText = 'text-align:center;padding:8px 0';
+    toggle.innerHTML = '<button class="btn" style="width:100%;justify-content:center" onclick="S.showAllDevices=false;filterDevices()">Show less</button>';
+    container.appendChild(toggle);
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1096,14 +1118,19 @@ async function selectDevice(deviceId) {
     d.operator  = det.operator || '';
     d.mac       = det.mac || '';
 
-    // Re-check tags from fresh detail
+    // Re-check tags from fresh detail — always overwrite cache with live data
+    S.deviceCtrlTag[d.serial] = null; // clear first so stale tag never persists
     d.tags.forEach(tag => {
       const tn = (tag.name||'').toLowerCase();
       if (CONFIGURED_TAG_KEYWORDS.some(k => tn.includes(k))) {
         S.configuredSerials.add(d.serial);
-        S.deviceCtrlTag[d.serial] = S.deviceCtrlTag[d.serial] || tag.name;
+        if (!S.deviceCtrlTag[d.serial]) S.deviceCtrlTag[d.serial] = tag.name;
       }
     });
+    // If no controller tag found on fresh fetch, remove from configured set
+    if (!S.deviceCtrlTag[d.serial]) {
+      S.configuredSerials.delete(d.serial);
+    }
 
     const tagged = S.configuredSerials.has(d.serial);
     filterDevices(); // re-render with updated tag state

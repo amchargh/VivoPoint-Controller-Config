@@ -103,7 +103,7 @@ app.get("/api/health", (req, res) => {
 app.get("/api/devices", auth.requireAuth, async (req, res) => {
   try {
     const all = [];
-    for (let offset = 0; offset < 500; offset += 100) {
+    for (let offset = 0; offset < 1000; offset += 100) {
       const data = await rmsGet(`/devices?offset=${offset}&limit=100`);
       const devices = data.data || [];
       const existing = new Set(all.map(d => d.id));
